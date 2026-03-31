@@ -1,33 +1,35 @@
 const DEFAULT_IMAGE =
   "https://via.placeholder.com/600x400/eaf2ff/2f66e7?text=No+Image";
 
-/* =========================
-   STORAGE HELPERS
-========================= */
+/* STORAGE */
 function getUsers() {
   return JSON.parse(localStorage.getItem("users")) || [];
 }
-
 function setUsers(users) {
   localStorage.setItem("users", JSON.stringify(users));
 }
-
 function getAdmins() {
   return JSON.parse(localStorage.getItem("admins")) || [];
 }
-
 function setAdmins(admins) {
   localStorage.setItem("admins", JSON.stringify(admins));
 }
-
 function getCurrentUser() {
   return JSON.parse(localStorage.getItem("currentUser")) || null;
 }
-
 function setCurrentUser(user) {
   localStorage.setItem("currentUser", JSON.stringify(user));
 }
-
+function getSavedReports() {
+  const saved = JSON.parse(localStorage.getItem("savedReports"));
+  if (saved && Array.isArray(saved)) return saved;
+  const defaultSaved = [1001, 1003];
+  localStorage.setItem("savedReports", JSON.stringify(defaultSaved));
+  return defaultSaved;
+}
+function setSavedReports(savedReports) {
+  localStorage.setItem("savedReports", JSON.stringify(savedReports));
+}
 function getReports() {
   const reports = JSON.parse(localStorage.getItem("reports"));
   if (reports && reports.length) return reports;
@@ -77,37 +79,30 @@ function getReports() {
       phone: "0500000004",
       image: DEFAULT_IMAGE,
     },
+    {
+      id: 1005,
+      ownerEmail: "student2@ksu.edu.sa",
+      itemName: "AirPods Case",
+      category: "Other",
+      description: "White AirPods case found near the cafeteria.",
+      date: "2026-03-16",
+      location: "Cafeteria",
+      phone: "0500000005",
+      image: DEFAULT_IMAGE,
+    },
   ];
 
   localStorage.setItem("reports", JSON.stringify(sampleReports));
   return sampleReports;
 }
-
 function setReports(reports) {
   localStorage.setItem("reports", JSON.stringify(reports));
 }
 
-function getSavedReports() {
-  const saved = JSON.parse(localStorage.getItem("savedReports"));
-  if (saved && saved.length) return saved;
-
-  const defaultSaved = [1001, 1003];
-  localStorage.setItem("savedReports", JSON.stringify(defaultSaved));
-  return defaultSaved;
-}
-
-function setSavedReports(savedReports) {
-  localStorage.setItem("savedReports", JSON.stringify(savedReports));
-}
-
-/* =========================
-   INITIAL SEED
-========================= */
+/* SEED */
 function seedAdminAccount() {
   const admins = getAdmins();
-  const exists = admins.some((admin) => admin.email === "admin@unifind.com");
-
-  if (!exists) {
+  if (!admins.some((admin) => admin.email === "admin@unifind.com")) {
     admins.push({
       name: "Administrator",
       email: "admin@unifind.com",
@@ -117,40 +112,41 @@ function seedAdminAccount() {
     setAdmins(admins);
   }
 }
-
-function seedDemoUser() {
+function seedDemoUsers() {
   const users = getUsers();
-  const exists = users.some((user) => user.email === "student1@ksu.edu.sa");
-
-  if (!exists) {
-    users.push({
-      name: "Sara Alqahtani",
-      email: "student1@ksu.edu.sa",
-      phone: "0551234567",
-      password: "123456",
-      role: "user",
-    });
-
-    users.push({
-      name: "Nora Alharbi",
-      email: "student2@ksu.edu.sa",
-      phone: "0559876543",
-      password: "123456",
-      role: "user",
-    });
-
+  if (!users.some((user) => user.email === "student1@ksu.edu.sa")) {
+    users.push(
+      {
+        name: "Sara Alqahtani",
+        email: "student1@ksu.edu.sa",
+        phone: "0551234567",
+        password: "123456",
+        role: "user",
+      },
+      {
+        name: "Nora Alharbi",
+        email: "student2@ksu.edu.sa",
+        phone: "0559876543",
+        password: "123456",
+        role: "user",
+      },
+      {
+        name: "Layan Alotaibi",
+        email: "student3@ksu.edu.sa",
+        phone: "0553332211",
+        password: "123456",
+        role: "user",
+      },
+    );
     setUsers(users);
   }
 }
 
-/* =========================
-   AUTH
-========================= */
+/* AUTH */
 function logout() {
   localStorage.removeItem("currentUser");
   window.location.href = "index.html";
 }
-
 function setupAuthLinks() {
   const authLink = document.getElementById("authLink");
   if (authLink) {
@@ -158,10 +154,10 @@ function setupAuthLinks() {
     if (currentUser) {
       authLink.textContent = "Sign Out";
       authLink.href = "#";
-      authLink.addEventListener("click", function (e) {
+      authLink.onclick = function (e) {
         e.preventDefault();
         logout();
-      });
+      };
     } else {
       authLink.textContent = "Sign In";
       authLink.href = "login.html";
@@ -172,20 +168,19 @@ function setupAuthLinks() {
   if (adminAuthLink) {
     adminAuthLink.textContent = "Sign Out";
     adminAuthLink.href = "#";
-    adminAuthLink.addEventListener("click", function (e) {
+    adminAuthLink.onclick = function (e) {
       e.preventDefault();
       logout();
-    });
+    };
   }
 
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
-    logoutBtn.addEventListener("click", function () {
+    logoutBtn.onclick = function () {
       logout();
-    });
+    };
   }
 }
-
 function requireUserRole() {
   const currentUser = getCurrentUser();
   if (!currentUser || currentUser.role !== "user") {
@@ -195,7 +190,6 @@ function requireUserRole() {
   }
   return true;
 }
-
 function requireAdminRole() {
   const currentUser = getCurrentUser();
   if (!currentUser || currentUser.role !== "admin") {
@@ -206,15 +200,12 @@ function requireAdminRole() {
   return true;
 }
 
-/* =========================
-   FILE / IMAGE HELPER
-========================= */
+/* IMAGE */
 function readImage(file, callback) {
   if (!file) {
     callback(DEFAULT_IMAGE);
     return;
   }
-
   const reader = new FileReader();
   reader.onload = function (e) {
     callback(e.target.result);
@@ -222,35 +213,27 @@ function readImage(file, callback) {
   reader.readAsDataURL(file);
 }
 
-/* =========================
-   LOGIN
-========================= */
+/* LOGIN */
 function setupLoginForm() {
   const loginForm = document.getElementById("loginForm");
   const loginUserBtn = document.getElementById("loginUserBtn");
   const loginAdminBtn = document.getElementById("loginAdminBtn");
-  const roleInput = document.getElementById("loginRole");
-
-  if (!loginForm || !loginUserBtn || !loginAdminBtn || !roleInput) return;
+  if (!loginForm) return;
 
   function submitLogin(role) {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
     const message = document.getElementById("loginMessage");
 
-    roleInput.value = role;
-
     if (role === "admin") {
       const admins = getAdmins();
       const admin = admins.find(
         (a) => a.email === email && a.password === password,
       );
-
       if (!admin) {
         message.textContent = "Invalid admin email or password.";
         return;
       }
-
       setCurrentUser(admin);
       message.textContent = "Admin login successful. Redirecting...";
       setTimeout(() => {
@@ -263,12 +246,10 @@ function setupLoginForm() {
     const user = users.find(
       (u) => u.email === email && u.password === password && u.role === "user",
     );
-
     if (!user) {
       message.textContent = "Invalid email or password.";
       return;
     }
-
     setCurrentUser(user);
     message.textContent = "Login successful. Redirecting...";
     setTimeout(() => {
@@ -276,13 +257,14 @@ function setupLoginForm() {
     }, 700);
   }
 
-  loginUserBtn.addEventListener("click", function () {
-    submitLogin("user");
-  });
-
-  loginAdminBtn.addEventListener("click", function () {
-    submitLogin("admin");
-  });
+  if (loginUserBtn && loginAdminBtn) {
+    loginUserBtn.onclick = function () {
+      submitLogin("user");
+    };
+    loginAdminBtn.onclick = function () {
+      submitLogin("admin");
+    };
+  }
 
   loginForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -290,9 +272,7 @@ function setupLoginForm() {
   });
 }
 
-/* =========================
-   REGISTER
-========================= */
+/* REGISTER */
 function setupRegisterForm() {
   const registerForm = document.getElementById("registerForm");
   if (!registerForm) return;
@@ -307,21 +287,12 @@ function setupRegisterForm() {
     const message = document.getElementById("registerMessage");
 
     const users = getUsers();
-    const emailExists = users.some((user) => user.email === email);
-
-    if (emailExists) {
+    if (users.some((user) => user.email === email)) {
       message.textContent = "This email is already registered.";
       return;
     }
 
-    const newUser = {
-      name,
-      email,
-      phone,
-      password,
-      role: "user",
-    };
-
+    const newUser = { name, email, phone, password, role: "user" };
     users.push(newUser);
     setUsers(users);
     setCurrentUser(newUser);
@@ -333,16 +304,13 @@ function setupRegisterForm() {
   });
 }
 
-/* =========================
-   CARDS
-========================= */
+/* USER CARDS */
 function createUserReportCard(report, options = {}) {
   const {
     canManage = false,
     showSave = true,
     showRemoveSaved = false,
   } = options;
-
   const savedReports = getSavedReports();
   const isSaved = savedReports.includes(report.id);
 
@@ -357,7 +325,6 @@ function createUserReportCard(report, options = {}) {
 
       <div class="actions">
         <a href="report-details.html?id=${report.id}" class="primary-btn">View</a>
-
         ${
           showSave
             ? showRemoveSaved
@@ -365,7 +332,6 @@ function createUserReportCard(report, options = {}) {
               : `<button class="secondary-btn" onclick="toggleSaveReport(${report.id})">${isSaved ? "Unsave" : "Save"}</button>`
             : ""
         }
-
         ${
           canManage
             ? `
@@ -379,6 +345,7 @@ function createUserReportCard(report, options = {}) {
   `;
 }
 
+/* ADMIN CARD */
 function createAdminReportCard(report) {
   return `
     <div class="report-card">
@@ -398,40 +365,30 @@ function createAdminReportCard(report) {
   `;
 }
 
-/* =========================
-   SAVE
-========================= */
+/* SAVE */
 function toggleSaveReport(reportId) {
   if (!requireUserRole()) return;
-
   let savedReports = getSavedReports();
-
   if (savedReports.includes(reportId)) {
     savedReports = savedReports.filter((id) => id !== reportId);
   } else {
     savedReports.push(reportId);
   }
-
   setSavedReports(savedReports);
-
   if (document.getElementById("savedList")) {
     renderSavedReportsPage();
   } else {
     window.location.reload();
   }
 }
-
 function removeSavedReport(reportId) {
   if (!requireUserRole()) return;
-
   const updated = getSavedReports().filter((id) => id !== reportId);
   setSavedReports(updated);
   renderSavedReportsPage();
 }
 
-/* =========================
-   REPORTS PAGE
-========================= */
+/* USER REPORTS */
 function renderReportsPage() {
   const reportsList = document.getElementById("reportsList");
   if (!reportsList) return;
@@ -440,6 +397,7 @@ function renderReportsPage() {
   const searchInput = document.getElementById("searchInput");
   const categoryFilter = document.getElementById("categoryFilter");
   const sortFilter = document.getElementById("sortFilter");
+  if (!searchInput || !categoryFilter || !sortFilter) return;
 
   function drawReports() {
     let reports = [...getReports()];
@@ -463,33 +421,24 @@ function renderReportsPage() {
       );
     }
 
-    reports.sort((a, b) => {
-      if (selectedSort === "newest") {
-        return new Date(b.date) - new Date(a.date);
-      }
-      return new Date(a.date) - new Date(b.date);
-    });
+    reports.sort((a, b) =>
+      selectedSort === "newest"
+        ? new Date(b.date) - new Date(a.date)
+        : new Date(a.date) - new Date(b.date),
+    );
 
-    if (!reports.length) {
-      reportsList.innerHTML = `<div class="empty-state">No reports found.</div>`;
-      return;
-    }
-
-    reportsList.innerHTML = reports
-      .map((report) => createUserReportCard(report))
-      .join("");
+    reportsList.innerHTML = reports.length
+      ? reports.map((report) => createUserReportCard(report)).join("")
+      : `<div class="empty-state">No reports found.</div>`;
   }
 
   searchInput.addEventListener("input", drawReports);
   categoryFilter.addEventListener("change", drawReports);
   sortFilter.addEventListener("change", drawReports);
-
   drawReports();
 }
 
-/* =========================
-   ADD REPORT
-========================= */
+/* ADD REPORT */
 function setupAddReportForm() {
   const reportForm = document.getElementById("reportForm");
   if (!reportForm) return;
@@ -505,12 +454,12 @@ function setupAddReportForm() {
     const date = document.getElementById("reportDate").value;
     const location = document.getElementById("location").value.trim();
     const phone = document.getElementById("phone").value.trim();
-    const imageFile = document.getElementById("image").files[0];
+    const imageInput = document.getElementById("image");
+    const imageFile = imageInput ? imageInput.files[0] : null;
     const reportMessage = document.getElementById("reportMessage");
 
     readImage(imageFile, function (imageData) {
       const reports = getReports();
-
       const newReport = {
         id: Date.now(),
         ownerEmail: currentUser.email,
@@ -536,17 +485,16 @@ function setupAddReportForm() {
   });
 }
 
-/* =========================
-   DETAILS
-========================= */
+/* DETAILS */
 function renderReportDetailsPage() {
   const reportDetails = document.getElementById("reportDetails");
   if (!reportDetails) return;
   if (!requireUserRole()) return;
 
   const reportId = new URLSearchParams(window.location.search).get("id");
-  const reports = getReports();
-  const report = reports.find((item) => String(item.id) === String(reportId));
+  const report = getReports().find(
+    (item) => String(item.id) === String(reportId),
+  );
 
   if (!report) {
     reportDetails.innerHTML = `<div class="empty-state">Report not found.</div>`;
@@ -562,7 +510,6 @@ function renderReportDetailsPage() {
       <div>
         <img class="details-image" src="${report.image || DEFAULT_IMAGE}" alt="${report.itemName}">
       </div>
-
       <div class="details-content">
         <h1>${report.itemName}</h1>
         <p><strong>Category:</strong> ${report.category}</p>
@@ -590,9 +537,7 @@ function renderReportDetailsPage() {
   `;
 }
 
-/* =========================
-   SAVED
-========================= */
+/* SAVED */
 function renderSavedReportsPage() {
   const savedList = document.getElementById("savedList");
   if (!savedList) return;
@@ -601,25 +546,20 @@ function renderSavedReportsPage() {
   const savedIds = getSavedReports();
   const reports = getReports().filter((report) => savedIds.includes(report.id));
 
-  if (!reports.length) {
-    savedList.innerHTML = `<div class="empty-state">No saved reports yet.</div>`;
-    return;
-  }
-
-  savedList.innerHTML = reports
-    .map((report) =>
-      createUserReportCard(report, {
-        canManage: false,
-        showSave: true,
-        showRemoveSaved: true,
-      }),
-    )
-    .join("");
+  savedList.innerHTML = reports.length
+    ? reports
+        .map((report) =>
+          createUserReportCard(report, {
+            canManage: false,
+            showSave: true,
+            showRemoveSaved: true,
+          }),
+        )
+        .join("")
+    : `<div class="empty-state">No saved reports yet.</div>`;
 }
 
-/* =========================
-   MY REPORTS
-========================= */
+/* MY REPORTS */
 function renderMyReportsPage() {
   const myReportsList = document.getElementById("myReportsList");
   if (!myReportsList) return;
@@ -630,25 +570,20 @@ function renderMyReportsPage() {
     (report) => report.ownerEmail === currentUser.email,
   );
 
-  if (!reports.length) {
-    myReportsList.innerHTML = `<div class="empty-state">You have not submitted any reports yet.</div>`;
-    return;
-  }
-
-  myReportsList.innerHTML = reports
-    .map((report) =>
-      createUserReportCard(report, {
-        canManage: true,
-        showSave: false,
-        showRemoveSaved: false,
-      }),
-    )
-    .join("");
+  myReportsList.innerHTML = reports.length
+    ? reports
+        .map((report) =>
+          createUserReportCard(report, {
+            canManage: true,
+            showSave: false,
+            showRemoveSaved: false,
+          }),
+        )
+        .join("")
+    : `<div class="empty-state">You have not submitted any reports yet.</div>`;
 }
 
-/* =========================
-   DELETE OWN
-========================= */
+/* DELETE OWN */
 function deleteOwnReport(reportId) {
   const currentUser = getCurrentUser();
   if (!currentUser || currentUser.role !== "user") return;
@@ -661,18 +596,12 @@ function deleteOwnReport(reportId) {
     return;
   }
 
-  const updatedReports = reports.filter((item) => item.id !== reportId);
-  setReports(updatedReports);
-
-  const updatedSaved = getSavedReports().filter((id) => id !== reportId);
-  setSavedReports(updatedSaved);
-
+  setReports(reports.filter((item) => item.id !== reportId));
+  setSavedReports(getSavedReports().filter((id) => id !== reportId));
   window.location.href = "my-reports.html";
 }
 
-/* =========================
-   EDIT OWN
-========================= */
+/* EDIT OWN */
 function setupEditReportForm() {
   const editReportForm = document.getElementById("editReportForm");
   if (!editReportForm) return;
@@ -711,10 +640,7 @@ function setupEditReportForm() {
         .getElementById("editDescription")
         .value.trim();
       report.phone = document.getElementById("editPhone").value.trim();
-
-      if (imageFile) {
-        report.image = imageData;
-      }
+      if (imageFile) report.image = imageData;
 
       setReports(reports);
       editMessage.textContent = "Report updated successfully.";
@@ -726,9 +652,7 @@ function setupEditReportForm() {
   });
 }
 
-/* =========================
-   PROFILE
-========================= */
+/* PROFILE */
 function setupProfileForm() {
   const profileForm = document.getElementById("profileForm");
   const editProfileBtn = document.getElementById("editProfileBtn");
@@ -747,28 +671,33 @@ function setupProfileForm() {
   nameInput.value = currentUser.name || "Sara Alqahtani";
   emailInput.value = currentUser.email || "student1@ksu.edu.sa";
   phoneInput.value = currentUser.phone || "0551234567";
-  profileDisplayName.textContent = currentUser.name || "Student Profile";
+  if (profileDisplayName)
+    profileDisplayName.textContent = currentUser.name || "Student Profile";
 
   function setEditableState(isEditable) {
     nameInput.disabled = !isEditable;
     phoneInput.disabled = !isEditable;
     emailInput.disabled = true;
 
-    if (isEditable) {
-      saveProfileBtn.classList.remove("hidden");
-      editProfileBtn.classList.add("hidden");
-    } else {
-      saveProfileBtn.classList.add("hidden");
-      editProfileBtn.classList.remove("hidden");
+    if (editProfileBtn && saveProfileBtn) {
+      if (isEditable) {
+        saveProfileBtn.classList.remove("hidden");
+        editProfileBtn.classList.add("hidden");
+      } else {
+        saveProfileBtn.classList.add("hidden");
+        editProfileBtn.classList.remove("hidden");
+      }
     }
   }
 
   setEditableState(false);
 
-  editProfileBtn.addEventListener("click", function () {
-    setEditableState(true);
-    message.textContent = "";
-  });
+  if (editProfileBtn) {
+    editProfileBtn.onclick = function () {
+      setEditableState(true);
+      message.textContent = "";
+    };
+  }
 
   profileForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -777,7 +706,6 @@ function setupProfileForm() {
     const userIndex = users.findIndex(
       (user) => user.email === currentUser.email,
     );
-
     if (userIndex === -1) return;
 
     users[userIndex].name = nameInput.value.trim();
@@ -786,15 +714,14 @@ function setupProfileForm() {
     setUsers(users);
     setCurrentUser(users[userIndex]);
 
-    profileDisplayName.textContent = users[userIndex].name;
+    if (profileDisplayName)
+      profileDisplayName.textContent = users[userIndex].name;
     message.textContent = "Profile updated successfully.";
     setEditableState(false);
   });
 }
 
-/* =========================
-   ADMIN REPORTS
-========================= */
+/* ADMIN REPORTS */
 function renderAdminReportsPage() {
   const adminReportsList = document.getElementById("adminReportsList");
   if (!adminReportsList) return;
@@ -803,6 +730,7 @@ function renderAdminReportsPage() {
   const adminSearchInput = document.getElementById("adminSearchInput");
   const adminCategoryFilter = document.getElementById("adminCategoryFilter");
   const adminSortFilter = document.getElementById("adminSortFilter");
+  if (!adminSearchInput || !adminCategoryFilter || !adminSortFilter) return;
 
   function drawAdminReports() {
     let reports = [...getReports()];
@@ -826,48 +754,32 @@ function renderAdminReportsPage() {
       );
     }
 
-    reports.sort((a, b) => {
-      if (selectedSort === "newest") {
-        return new Date(b.date) - new Date(a.date);
-      }
-      return new Date(a.date) - new Date(b.date);
-    });
+    reports.sort((a, b) =>
+      selectedSort === "newest"
+        ? new Date(b.date) - new Date(a.date)
+        : new Date(a.date) - new Date(b.date),
+    );
 
-    if (!reports.length) {
-      adminReportsList.innerHTML = `<div class="empty-state">No reports found.</div>`;
-      return;
-    }
-
-    adminReportsList.innerHTML = reports
-      .map((report) => createAdminReportCard(report))
-      .join("");
+    adminReportsList.innerHTML = reports.length
+      ? reports.map((report) => createAdminReportCard(report)).join("")
+      : `<div class="empty-state">No reports found.</div>`;
   }
 
   adminSearchInput.addEventListener("input", drawAdminReports);
   adminCategoryFilter.addEventListener("change", drawAdminReports);
   adminSortFilter.addEventListener("change", drawAdminReports);
-
   drawAdminReports();
 }
 
-/* =========================
-   ADMIN DELETE
-========================= */
+/* ADMIN DELETE */
 function deleteAnyReport(reportId) {
   if (!requireAdminRole()) return;
-
-  const reports = getReports().filter((report) => report.id !== reportId);
-  setReports(reports);
-
-  const updatedSaved = getSavedReports().filter((id) => id !== reportId);
-  setSavedReports(updatedSaved);
-
-  window.location.reload();
+  setReports(getReports().filter((report) => report.id !== reportId));
+  setSavedReports(getSavedReports().filter((id) => id !== reportId));
+  window.location.href = "admin-reports.html";
 }
 
-/* =========================
-   ADMIN EDIT
-========================= */
+/* ADMIN EDIT */
 function setupAdminEditReportForm() {
   const adminEditReportForm = document.getElementById("adminEditReportForm");
   if (!adminEditReportForm) return;
@@ -909,10 +821,7 @@ function setupAdminEditReportForm() {
         .getElementById("adminEditDescription")
         .value.trim();
       report.phone = document.getElementById("adminEditPhone").value.trim();
-
-      if (imageFile) {
-        report.image = imageData;
-      }
+      if (imageFile) report.image = imageData;
 
       setReports(reports);
       adminEditMessage.textContent = "Report updated successfully.";
@@ -924,40 +833,38 @@ function setupAdminEditReportForm() {
   });
 }
 
-/* =========================
-   INIT
-========================= */
-document.addEventListener("DOMContentLoaded", function () {
-  seedAdminAccount();
-  seedDemoUser();
-  getReports();
-  getSavedReports();
-
-  setupAuthLinks();
-  setupLoginForm();
-  setupRegisterForm();
-
-  renderReportsPage();
-  setupAddReportForm();
-  renderReportDetailsPage();
-  renderSavedReportsPage();
-  renderMyReportsPage();
-  setupEditReportForm();
-  setupProfileForm();
-
-  renderAdminReportsPage();
-  setupAdminEditReportForm();
-  renderAdminDashboardStats();
-});
+/* ADMIN DASHBOARD */
 function renderAdminDashboardStats() {
   if (!document.getElementById("adminTotalReports")) return;
   if (!requireAdminRole()) return;
 
-  const reports = getReports();
-  const users = getUsers();
-  const saved = getSavedReports();
-
-  document.getElementById("adminTotalReports").textContent = reports.length;
-  document.getElementById("adminTotalUsers").textContent = users.length;
-  document.getElementById("adminSavedCount").textContent = saved.length;
+  document.getElementById("adminTotalReports").textContent =
+    getReports().length;
+  document.getElementById("adminTotalUsers").textContent = getUsers().length;
+  document.getElementById("adminSavedCount").textContent =
+    getSavedReports().length;
 }
+
+/* INIT */
+document.addEventListener("DOMContentLoaded", function () {
+  seedAdminAccount();
+  seedDemoUsers();
+  getReports();
+  getSavedReports();
+  setupAuthLinks();
+
+  const page = document.body.dataset.page || "";
+
+  if (page === "login") setupLoginForm();
+  if (page === "register") setupRegisterForm();
+  if (page === "reports") renderReportsPage();
+  if (page === "add-report") setupAddReportForm();
+  if (page === "report-details") renderReportDetailsPage();
+  if (page === "saved") renderSavedReportsPage();
+  if (page === "my-reports") renderMyReportsPage();
+  if (page === "edit-report") setupEditReportForm();
+  if (page === "profile") setupProfileForm();
+  if (page === "admin-dashboard") renderAdminDashboardStats();
+  if (page === "admin-reports") renderAdminReportsPage();
+  if (page === "admin-edit-report") setupAdminEditReportForm();
+});
