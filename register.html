@@ -26,69 +26,108 @@
 
     <main class="auth-page">
       <div class="container auth-wrapper">
-        <div class="auth-card">
+        <div class="auth-card modern-auth-card">
           <h1>Create Account</h1>
           <p class="auth-subtitle">
-            Register to submit reports, save items, and manage your profile.
+            Create your UniFind account to submit reports, save items, and
+            manage your profile.
           </p>
 
           <form id="registerForm">
             <div class="form-group">
               <label for="registerName">Full Name</label>
-              <input
-                type="text"
-                id="registerName"
-                placeholder="Enter your full name"
-                required
-              />
+              <div class="input-with-icon">
+                <span class="input-icon">👤</span>
+                <input
+                  type="text"
+                  id="registerName"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
             </div>
 
             <div class="form-group">
               <label for="registerEmail">University Email</label>
-              <input
-                type="email"
-                id="registerEmail"
-                placeholder="Enter your university email"
-                required
-              />
+              <div class="input-with-icon">
+                <span class="input-icon">✉️</span>
+                <input
+                  type="email"
+                  id="registerEmail"
+                  placeholder="Enter your university email"
+                  required
+                />
+              </div>
             </div>
 
             <div class="form-group">
               <label for="registerPhone">Phone Number</label>
-              <input
-                type="text"
-                id="registerPhone"
-                placeholder="Enter your phone number"
-                required
-              />
+              <div class="input-with-icon">
+                <span class="input-icon">📱</span>
+                <input
+                  type="text"
+                  id="registerPhone"
+                  placeholder="Enter your phone number"
+                  required
+                />
+              </div>
             </div>
 
             <div class="form-group">
               <label for="registerPassword">Password</label>
-              <input
-                type="password"
-                id="registerPassword"
-                placeholder="Create a password"
-                required
-              />
+              <div class="input-with-icon">
+                <span class="input-icon">🔒</span>
+                <input
+                  type="password"
+                  id="registerPassword"
+                  placeholder="Create a password"
+                  required
+                />
+              </div>
             </div>
 
             <button type="submit" class="primary-btn form-btn">Sign Up</button>
             <p id="registerMessage" class="form-message"></p>
           </form>
 
-          <p class="auth-footer-text">
+          <p class="auth-footer-text center-text">
             Already have an account?
-            <a href="login.html">Sign In</a>
+            <a href="login.html">Sign in</a>
           </p>
         </div>
       </div>
     </main>
 
-    <footer class="site-footer">
-      <div class="container footer-content">
-        <p>© 2026 UniFind. All rights reserved.</p>
-        <p>Lost &amp; Found platform for university students.</p>
+    <footer class="site-footer professional-footer">
+      <div class="container footer-pro-grid">
+        <div>
+          <h3>UniFind</h3>
+          <p>
+            A smart lost-and-found platform that helps university students
+            report, search, and manage item reports in one place.
+          </p>
+        </div>
+
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="login.html">Sign In</a></li>
+            <li><a href="register.html">Sign Up</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Contact</h4>
+          <p>King Saud University</p>
+          <p>UniFind Platform Demo</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <p>© 2026 UniFind. All rights reserved.</p>
+        </div>
       </div>
     </footer>
 

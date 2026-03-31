@@ -227,15 +227,18 @@ function readImage(file, callback) {
 ========================= */
 function setupLoginForm() {
   const loginForm = document.getElementById("loginForm");
-  if (!loginForm) return;
+  const loginUserBtn = document.getElementById("loginUserBtn");
+  const loginAdminBtn = document.getElementById("loginAdminBtn");
+  const roleInput = document.getElementById("loginRole");
 
-  loginForm.addEventListener("submit", function (e) {
-    e.preventDefault();
+  if (!loginForm || !loginUserBtn || !loginAdminBtn || !roleInput) return;
 
+  function submitLogin(role) {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
-    const role = document.getElementById("loginRole").value;
     const message = document.getElementById("loginMessage");
+
+    roleInput.value = role;
 
     if (role === "admin") {
       const admins = getAdmins();
@@ -271,6 +274,19 @@ function setupLoginForm() {
     setTimeout(() => {
       window.location.href = "reports.html";
     }, 700);
+  }
+
+  loginUserBtn.addEventListener("click", function () {
+    submitLogin("user");
+  });
+
+  loginAdminBtn.addEventListener("click", function () {
+    submitLogin("admin");
+  });
+
+  loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    submitLogin("user");
   });
 }
 
@@ -715,16 +731,44 @@ function setupEditReportForm() {
 ========================= */
 function setupProfileForm() {
   const profileForm = document.getElementById("profileForm");
+  const editProfileBtn = document.getElementById("editProfileBtn");
+  const saveProfileBtn = document.getElementById("saveProfileBtn");
+  const profileDisplayName = document.getElementById("profileDisplayName");
+
   if (!profileForm) return;
   if (!requireUserRole()) return;
 
   const currentUser = getCurrentUser();
-  document.getElementById("profileName").value =
-    currentUser.name || "Sara Alqahtani";
-  document.getElementById("profileEmail").value =
-    currentUser.email || "student1@ksu.edu.sa";
-  document.getElementById("profilePhone").value =
-    currentUser.phone || "0551234567";
+  const nameInput = document.getElementById("profileName");
+  const emailInput = document.getElementById("profileEmail");
+  const phoneInput = document.getElementById("profilePhone");
+  const message = document.getElementById("profileMessage");
+
+  nameInput.value = currentUser.name || "Sara Alqahtani";
+  emailInput.value = currentUser.email || "student1@ksu.edu.sa";
+  phoneInput.value = currentUser.phone || "0551234567";
+  profileDisplayName.textContent = currentUser.name || "Student Profile";
+
+  function setEditableState(isEditable) {
+    nameInput.disabled = !isEditable;
+    phoneInput.disabled = !isEditable;
+    emailInput.disabled = true;
+
+    if (isEditable) {
+      saveProfileBtn.classList.remove("hidden");
+      editProfileBtn.classList.add("hidden");
+    } else {
+      saveProfileBtn.classList.add("hidden");
+      editProfileBtn.classList.remove("hidden");
+    }
+  }
+
+  setEditableState(false);
+
+  editProfileBtn.addEventListener("click", function () {
+    setEditableState(true);
+    message.textContent = "";
+  });
 
   profileForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -736,16 +780,15 @@ function setupProfileForm() {
 
     if (userIndex === -1) return;
 
-    users[userIndex].name = document.getElementById("profileName").value.trim();
-    users[userIndex].phone = document
-      .getElementById("profilePhone")
-      .value.trim();
+    users[userIndex].name = nameInput.value.trim();
+    users[userIndex].phone = phoneInput.value.trim();
 
     setUsers(users);
     setCurrentUser(users[userIndex]);
 
-    const profileMessage = document.getElementById("profileMessage");
-    profileMessage.textContent = "Profile updated successfully.";
+    profileDisplayName.textContent = users[userIndex].name;
+    message.textContent = "Profile updated successfully.";
+    setEditableState(false);
   });
 }
 
@@ -904,4 +947,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   renderAdminReportsPage();
   setupAdminEditReportForm();
+  renderAdminDashboardStats();
 });
+function renderAdminDashboardStats() {
+  if (!document.getElementById("adminTotalReports")) return;
+  if (!requireAdminRole()) return;
+
+  const reports = getReports();
+  const users = getUsers();
+  const saved = getSavedReports();
+
+  document.getElementById("adminTotalReports").textContent = reports.length;
+  document.getElementById("adminTotalUsers").textContent = users.length;
+  document.getElementById("adminSavedCount").textContent = saved.length;
+}

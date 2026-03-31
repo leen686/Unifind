@@ -24,7 +24,7 @@
           <a href="saved.html" class="nav-link-text">Saved</a>
           <a href="my-reports.html" class="nav-link-text">My Reports</a>
           <a href="profile.html" class="nav-link-text active-link">Profile</a>
-          <a href="login.html" id="authLink" class="nav-btn secondary-btn"
+          <a href="login.html" id="authLink" class="nav-btn primary-btn"
             >Sign In</a
           >
         </nav>
@@ -35,14 +35,22 @@
       <div class="container">
         <div class="page-heading">
           <h1>Profile</h1>
-          <p>Update your personal information and manage your account.</p>
+          <p>View your account information and edit it only when needed.</p>
         </div>
 
-        <div class="form-card">
+        <div class="form-card profile-card">
+          <div class="profile-top">
+            <div class="profile-avatar">👤</div>
+            <div>
+              <h2 id="profileDisplayName">Student Profile</h2>
+              <p class="profile-subtext">Manage your personal information</p>
+            </div>
+          </div>
+
           <form id="profileForm">
             <div class="form-group">
               <label for="profileName">Full Name</label>
-              <input type="text" id="profileName" required />
+              <input type="text" id="profileName" disabled />
             </div>
 
             <div class="form-group">
@@ -52,27 +60,65 @@
 
             <div class="form-group">
               <label for="profilePhone">Phone Number</label>
-              <input type="text" id="profilePhone" required />
+              <input type="text" id="profilePhone" disabled />
             </div>
 
-            <button type="submit" class="primary-btn form-btn">
-              Update Profile
-            </button>
+            <div class="profile-actions">
+              <button type="button" id="editProfileBtn" class="primary-btn">
+                Edit Profile
+              </button>
+              <button
+                type="submit"
+                id="saveProfileBtn"
+                class="secondary-btn hidden"
+              >
+                Save Changes
+              </button>
+            </div>
+
             <p id="profileMessage" class="form-message"></p>
           </form>
 
           <button id="logoutBtn" class="secondary-btn form-btn logout-btn">
-            Logout
+            Sign Out
           </button>
         </div>
       </div>
     </main>
-    <footer class="site-footer">
-      <div class="container footer-content">
-        <p>© 2026 UniFind. All rights reserved.</p>
-        <p>Lost &amp; Found platform for university students.</p>
+
+    <footer class="site-footer professional-footer">
+      <div class="container footer-pro-grid">
+        <div>
+          <h3>UniFind</h3>
+          <p>
+            A smart lost-and-found platform that helps university students
+            report, search, and manage item reports in one place.
+          </p>
+        </div>
+
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-list">
+            <li><a href="reports.html">Reports</a></li>
+            <li><a href="saved.html">Saved</a></li>
+            <li><a href="my-reports.html">My Reports</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Contact</h4>
+          <p>King Saud University</p>
+          <p>UniFind Platform Demo</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <p>© 2026 UniFind. All rights reserved.</p>
+        </div>
       </div>
     </footer>
+
     <script src="app.js"></script>
   </body>
 </html>

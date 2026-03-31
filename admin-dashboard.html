@@ -13,7 +13,7 @@
           <div class="logo-box">🛠️</div>
           <div class="logo-text">
             <span class="logo-dark">Uni</span>
-            <span class="logo-blue">Find</span>
+            <span class="logo-blue">Find Admin</span>
           </div>
         </a>
 
@@ -22,7 +22,7 @@
             >Dashboard</a
           >
           <a href="admin-reports.html" class="nav-link-text">All Reports</a>
-          <a href="login.html" id="adminAuthLink" class="nav-btn secondary-btn"
+          <a href="login.html" id="adminAuthLink" class="nav-btn primary-btn"
             >Sign Out</a
           >
         </nav>
@@ -33,20 +33,31 @@
       <div class="container">
         <div class="page-heading">
           <h1>Admin Dashboard</h1>
-          <p>
-            Manage all reports submitted to the system from one central
-            dashboard.
-          </p>
+          <p>Monitor and manage all reports across the platform.</p>
         </div>
+
+        <section class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <h3>Total Reports</h3>
+            <p id="adminTotalReports">0</p>
+          </div>
+
+          <div class="admin-stat-card">
+            <h3>Total Users</h3>
+            <p id="adminTotalUsers">0</p>
+          </div>
+
+          <div class="admin-stat-card">
+            <h3>Saved References</h3>
+            <p id="adminSavedCount">0</p>
+          </div>
+        </section>
 
         <section class="admin-cards-grid">
           <div class="admin-card">
             <div class="admin-card-icon">📄</div>
             <h3>View All Reports</h3>
-            <p>
-              Access and review all reports submitted by users across the
-              platform.
-            </p>
+            <p>Access and review all reports submitted by users.</p>
             <a href="admin-reports.html" class="primary-btn card-btn"
               >Open Reports</a
             >
@@ -56,8 +67,8 @@
             <div class="admin-card-icon">✏️</div>
             <h3>Edit Any Report</h3>
             <p>
-              Update any report information when corrections or changes are
-              required.
+              Update any report information and changes will appear for
+              everyone.
             </p>
             <a href="admin-reports.html" class="primary-btn card-btn"
               >Manage Reports</a
@@ -67,10 +78,7 @@
           <div class="admin-card">
             <div class="admin-card-icon">🗑️</div>
             <h3>Delete Any Report</h3>
-            <p>
-              Remove reports from the platform when needed as part of admin
-              control.
-            </p>
+            <p>Remove any report and it will be removed for all users too.</p>
             <a href="admin-reports.html" class="primary-btn card-btn"
               >Go to Reports</a
             >
@@ -78,11 +86,39 @@
         </section>
       </div>
     </main>
-    <footer class="site-footer">
-      <div class="container footer-content">
-        <p>© 2026 UniFind. All rights reserved.</p>
-        <p>Lost &amp; Found platform for university students.</p>
+
+    <footer class="site-footer professional-footer">
+      <div class="container footer-pro-grid">
+        <div>
+          <h3>UniFind Admin</h3>
+          <p>
+            Administrative access for monitoring, editing, and deleting all
+            reports in the system.
+          </p>
+        </div>
+
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-list">
+            <li><a href="admin-dashboard.html">Dashboard</a></li>
+            <li><a href="admin-reports.html">All Reports</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>System Access</h4>
+          <p>Admin Demo Mode</p>
+          <p>Shared report management enabled</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <p>© 2026 UniFind Admin. All rights reserved.</p>
+        </div>
       </div>
     </footer>
+
+    <script src="app.js"></script>
   </body>
 </html>

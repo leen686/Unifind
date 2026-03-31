@@ -26,52 +26,70 @@
 
     <main class="auth-page">
       <div class="container auth-wrapper">
-        <div class="auth-card">
-          <h1>Sign In</h1>
+        <div class="auth-card modern-auth-card">
+          <h1>Login</h1>
           <p class="auth-subtitle">
-            Sign in to access your reports, saved items, and profile.
+            Welcome back! Sign in to access your reports, saved items, and
+            profile.
           </p>
 
           <form id="loginForm">
             <div class="form-group">
-              <label for="loginEmail">University Email</label>
-              <input
-                type="email"
-                id="loginEmail"
-                placeholder="Enter your email"
-                required
-              />
+              <label for="loginEmail">Email Address</label>
+              <div class="input-with-icon">
+                <span class="input-icon">✉️</span>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
             </div>
 
             <div class="form-group">
               <label for="loginPassword">Password</label>
-              <input
-                type="password"
-                id="loginPassword"
-                placeholder="Enter your password"
-                required
-              />
+              <div class="input-with-icon">
+                <span class="input-icon">🔒</span>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="loginRole">Login As</label>
-              <select id="loginRole" required>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
+            <input type="hidden" id="loginRole" value="user" />
+
+            <div class="login-action-stack">
+              <button
+                type="button"
+                id="loginUserBtn"
+                class="primary-btn auth-action-btn"
+              >
+                Login as User →
+              </button>
+
+              <button
+                type="button"
+                id="loginAdminBtn"
+                class="secondary-btn auth-action-btn"
+              >
+                Login as Admin →
+              </button>
             </div>
 
-            <button type="submit" class="primary-btn form-btn">Sign In</button>
             <p id="loginMessage" class="form-message"></p>
           </form>
 
-          <p class="auth-footer-text">
-            Don’t have an account?
-            <a href="register.html">Sign Up</a>
+          <p class="auth-footer-text center-text">
+            New to UniFind?
+            <a href="register.html">Sign up</a>
           </p>
 
-          <div class="empty-state" style="margin-top: 16px">
-            <strong>Admin test account</strong><br />
+          <div class="mini-info-box">
+            <strong>Admin demo account</strong><br />
             Email: admin@unifind.com<br />
             Password: admin123
           </div>
@@ -79,10 +97,36 @@
       </div>
     </main>
 
-    <footer class="site-footer">
-      <div class="container footer-content">
-        <p>© 2026 UniFind. All rights reserved.</p>
-        <p>Lost &amp; Found platform for university students.</p>
+    <footer class="site-footer professional-footer">
+      <div class="container footer-pro-grid">
+        <div>
+          <h3>UniFind</h3>
+          <p>
+            A smart lost-and-found platform that helps university students
+            report, search, and manage item reports in one place.
+          </p>
+        </div>
+
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="login.html">Sign In</a></li>
+            <li><a href="register.html">Sign Up</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Contact</h4>
+          <p>King Saud University</p>
+          <p>UniFind Platform Demo</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <p>© 2026 UniFind. All rights reserved.</p>
+        </div>
       </div>
     </footer>
 
