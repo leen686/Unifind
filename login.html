@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniFind | Login</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="login">
+    <header class="main-header">
+      <div class="container navbar">
+        <a href="index.html" class="logo">
+          <div class="logo-box">🔍</div>
+          <div class="logo-text">
+            <span class="logo-dark">Uni</span>
+            <span class="logo-blue">Find</span>
+          </div>
+        </a>
+
+        <nav class="nav-links">
+          <a href="index.html" class="nav-link-text">Home</a>
+          <a href="register.html" class="nav-btn primary-btn">Sign Up</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="auth-page">
+      <div class="container auth-wrapper">
+        <div class="auth-card">
+          <h1>Sign In</h1>
+          <p class="auth-subtitle">
+            Sign in to access your reports, saved items, and profile.
+          </p>
+
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="loginEmail">University Email</label>
+              <input
+                type="email"
+                id="loginEmail"
+                name="loginEmail"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input
+                type="password"
+                id="loginPassword"
+                name="loginPassword"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="loginRole">Login As</label>
+              <select id="loginRole" name="loginRole" required>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <button type="submit" class="primary-btn form-btn">Sign In</button>
+            <p id="loginMessage" class="form-message"></p>
+          </form>
+
+          <p class="auth-footer-text">
+            Don’t have an account?
+            <a href="register.html">Sign Up</a>
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

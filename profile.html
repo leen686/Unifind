@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniFind | Profile</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="profile">
+    <header class="main-header">
+      <div class="container navbar">
+        <a href="index.html" class="logo">
+          <div class="logo-box">🔍</div>
+          <div class="logo-text">
+            <span class="logo-dark">Uni</span>
+            <span class="logo-blue">Find</span>
+          </div>
+        </a>
+
+        <nav class="nav-links nav-links-full">
+          <a href="index.html" class="nav-link-text">Home</a>
+          <a href="reports.html" class="nav-link-text">Reports</a>
+          <a href="add-report.html" class="nav-link-text">Add Report</a>
+          <a href="saved.html" class="nav-link-text">Saved</a>
+          <a href="my-reports.html" class="nav-link-text">My Reports</a>
+          <a href="profile.html" class="nav-link-text active-link">Profile</a>
+          <a href="login.html" id="authLink" class="nav-btn secondary-btn"
+            >Sign In</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main class="form-page">
+      <div class="container">
+        <div class="page-heading">
+          <h1>Profile</h1>
+          <p>Update your personal information and manage your account.</p>
+        </div>
+
+        <div class="form-card">
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="profileName">Full Name</label>
+              <input type="text" id="profileName" required />
+            </div>
+
+            <div class="form-group">
+              <label for="profileEmail">Email</label>
+              <input type="email" id="profileEmail" disabled />
+            </div>
+
+            <div class="form-group">
+              <label for="profilePhone">Phone Number</label>
+              <input type="text" id="profilePhone" required />
+            </div>
+
+            <button type="submit" class="primary-btn form-btn">
+              Update Profile
+            </button>
+            <p id="profileMessage" class="form-message"></p>
+          </form>
+
+          <button id="logoutBtn" class="secondary-btn form-btn logout-btn">
+            Logout
+          </button>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

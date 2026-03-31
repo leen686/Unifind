@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniFind | Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="admin-dashboard">
+    <header class="main-header">
+      <div class="container navbar">
+        <a href="index.html" class="logo">
+          <div class="logo-box">🛠️</div>
+          <div class="logo-text">
+            <span class="logo-dark">Uni</span>
+            <span class="logo-blue">Find Admin</span>
+          </div>
+        </a>
+
+        <nav class="nav-links nav-links-full">
+          <a href="admin-dashboard.html" class="nav-link-text active-link"
+            >Dashboard</a
+          >
+          <a href="admin-reports.html" class="nav-link-text">All Reports</a>
+          <a href="login.html" id="adminAuthLink" class="nav-btn secondary-btn"
+            >Sign Out</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main class="admin-page">
+      <div class="container">
+        <div class="page-heading">
+          <h1>Admin Dashboard</h1>
+          <p>
+            Manage all reports submitted to the system from one central
+            dashboard.
+          </p>
+        </div>
+
+        <section class="admin-cards-grid">
+          <div class="admin-card">
+            <div class="admin-card-icon">📄</div>
+            <h3>View All Reports</h3>
+            <p>
+              Access and review all reports submitted by users across the
+              platform.
+            </p>
+            <a href="admin-reports.html" class="primary-btn card-btn"
+              >Open Reports</a
+            >
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-icon">✏️</div>
+            <h3>Edit Any Report</h3>
+            <p>
+              Update any report information when corrections or changes are
+              required.
+            </p>
+            <a href="admin-reports.html" class="primary-btn card-btn"
+              >Manage Reports</a
+            >
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-icon">🗑️</div>
+            <h3>Delete Any Report</h3>
+            <p>
+              Remove reports from the platform when needed as part of admin
+              control.
+            </p>
+            <a href="admin-reports.html" class="primary-btn card-btn"
+              >Go to Reports</a
+            >
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
