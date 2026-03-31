@@ -38,7 +38,6 @@
               <input
                 type="email"
                 id="loginEmail"
-                name="loginEmail"
                 placeholder="Enter your email"
                 required
               />
@@ -49,7 +48,6 @@
               <input
                 type="password"
                 id="loginPassword"
-                name="loginPassword"
                 placeholder="Enter your password"
                 required
               />
@@ -57,7 +55,7 @@
 
             <div class="form-group">
               <label for="loginRole">Login As</label>
-              <select id="loginRole" name="loginRole" required>
+              <select id="loginRole" required>
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
@@ -71,8 +69,23 @@
             Don’t have an account?
             <a href="register.html">Sign Up</a>
           </p>
+
+          <div class="empty-state" style="margin-top: 16px">
+            <strong>Admin test account</strong><br />
+            Email: admin@unifind.com<br />
+            Password: admin123
+          </div>
         </div>
       </div>
     </main>
+
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <p>© 2026 UniFind. All rights reserved.</p>
+        <p>Lost &amp; Found platform for university students.</p>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
   </body>
 </html>

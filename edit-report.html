@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -26,7 +26,7 @@
             >My Reports</a
           >
           <a href="profile.html" class="nav-link-text">Profile</a>
-          <a href="login.html" id="authLink" class="nav-btn secondary-btn"
+          <a href="login.html" id="authLink" class="nav-btn primary-btn"
             >Sign In</a
           >
         </nav>
@@ -45,19 +45,9 @@
 
         <div class="form-card form-card-wide">
           <form id="editReportForm">
-            <div class="form-row two-columns">
-              <div class="form-group">
-                <label for="editReportType">Report Type</label>
-                <select id="editReportType" required>
-                  <option value="Lost">Lost</option>
-                  <option value="Found">Found</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="editItemName">Item Name</label>
-                <input type="text" id="editItemName" required />
-              </div>
+            <div class="form-group">
+              <label for="editItemName">Item Name</label>
+              <input type="text" id="editItemName" required />
             </div>
 
             <div class="form-row two-columns">
@@ -107,5 +97,14 @@
         </div>
       </div>
     </main>
+
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <p>© 2026 UniFind. All rights reserved.</p>
+        <p>Lost &amp; Found platform for university students.</p>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
   </body>
 </html>

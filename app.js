@@ -34,27 +34,47 @@ function getReports() {
 
   const sampleReports = [
     {
-      id: Date.now() + 1,
+      id: 1001,
       ownerEmail: "student1@ksu.edu.sa",
-      type: "Lost",
       itemName: "Student ID Card",
       category: "ID Card",
-      description: "Blue KSU ID card lost near the main entrance.",
+      description: "Blue KSU student ID card lost near the main entrance.",
       date: "2026-03-20",
       location: "Building 31",
       phone: "0500000001",
       image: DEFAULT_IMAGE,
     },
     {
-      id: Date.now() + 2,
-      ownerEmail: "student2@ksu.edu.sa",
-      type: "Found",
+      id: 1002,
+      ownerEmail: "student1@ksu.edu.sa",
       itemName: "Black Wallet",
       category: "Wallet",
       description: "Found near the library study area.",
       date: "2026-03-21",
       location: "Library",
       phone: "0500000002",
+      image: DEFAULT_IMAGE,
+    },
+    {
+      id: 1003,
+      ownerEmail: "student2@ksu.edu.sa",
+      itemName: "Car Keys",
+      category: "Keys",
+      description: "Set of silver keys with a blue keychain.",
+      date: "2026-03-18",
+      location: "Parking Area",
+      phone: "0500000003",
+      image: DEFAULT_IMAGE,
+    },
+    {
+      id: 1004,
+      ownerEmail: "student3@ksu.edu.sa",
+      itemName: "Backpack",
+      category: "Bag",
+      description: "Black backpack left in the hallway near classroom 204.",
+      date: "2026-03-17",
+      location: "Building 5",
+      phone: "0500000004",
       image: DEFAULT_IMAGE,
     },
   ];
@@ -68,7 +88,12 @@ function setReports(reports) {
 }
 
 function getSavedReports() {
-  return JSON.parse(localStorage.getItem("savedReports")) || [];
+  const saved = JSON.parse(localStorage.getItem("savedReports"));
+  if (saved && saved.length) return saved;
+
+  const defaultSaved = [1001, 1003];
+  localStorage.setItem("savedReports", JSON.stringify(defaultSaved));
+  return defaultSaved;
 }
 
 function setSavedReports(savedReports) {
@@ -93,12 +118,37 @@ function seedAdminAccount() {
   }
 }
 
+function seedDemoUser() {
+  const users = getUsers();
+  const exists = users.some((user) => user.email === "student1@ksu.edu.sa");
+
+  if (!exists) {
+    users.push({
+      name: "Sara Alqahtani",
+      email: "student1@ksu.edu.sa",
+      phone: "0551234567",
+      password: "123456",
+      role: "user",
+    });
+
+    users.push({
+      name: "Nora Alharbi",
+      email: "student2@ksu.edu.sa",
+      phone: "0559876543",
+      password: "123456",
+      role: "user",
+    });
+
+    setUsers(users);
+  }
+}
+
 /* =========================
-   AUTH HELPERS
+   AUTH
 ========================= */
 function logout() {
   localStorage.removeItem("currentUser");
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 function setupAuthLinks() {
@@ -106,7 +156,7 @@ function setupAuthLinks() {
   if (authLink) {
     const currentUser = getCurrentUser();
     if (currentUser) {
-      authLink.textContent = "Logout";
+      authLink.textContent = "Sign Out";
       authLink.href = "#";
       authLink.addEventListener("click", function (e) {
         e.preventDefault();
@@ -120,6 +170,8 @@ function setupAuthLinks() {
 
   const adminAuthLink = document.getElementById("adminAuthLink");
   if (adminAuthLink) {
+    adminAuthLink.textContent = "Sign Out";
+    adminAuthLink.href = "#";
     adminAuthLink.addEventListener("click", function (e) {
       e.preventDefault();
       logout();
@@ -132,16 +184,6 @@ function setupAuthLinks() {
       logout();
     });
   }
-}
-
-function requireLogin() {
-  const currentUser = getCurrentUser();
-  if (!currentUser) {
-    alert("Please sign in first.");
-    window.location.href = "login.html";
-    return false;
-  }
-  return true;
 }
 
 function requireUserRole() {
@@ -165,7 +207,8 @@ function requireAdminRole() {
 }
 
 /* =========================
-   FILE / IMAGE HELPER========================= */
+   FILE / IMAGE HELPER
+========================= */
 function readImage(file, callback) {
   if (!file) {
     callback(DEFAULT_IMAGE);
@@ -180,7 +223,7 @@ function readImage(file, callback) {
 }
 
 /* =========================
-   LOGIN PAGE
+   LOGIN
 ========================= */
 function setupLoginForm() {
   const loginForm = document.getElementById("loginForm");
@@ -209,7 +252,7 @@ function setupLoginForm() {
       message.textContent = "Admin login successful. Redirecting...";
       setTimeout(() => {
         window.location.href = "admin-dashboard.html";
-      }, 900);
+      }, 700);
       return;
     }
 
@@ -227,12 +270,12 @@ function setupLoginForm() {
     message.textContent = "Login successful. Redirecting...";
     setTimeout(() => {
       window.location.href = "reports.html";
-    }, 900);
+    }, 700);
   });
 }
 
 /* =========================
-   REGISTER PAGE
+   REGISTER
 ========================= */
 function setupRegisterForm() {
   const registerForm = document.getElementById("registerForm");
@@ -270,12 +313,12 @@ function setupRegisterForm() {
     message.textContent = "Account created successfully. Redirecting...";
     setTimeout(() => {
       window.location.href = "reports.html";
-    }, 900);
+    }, 700);
   });
 }
 
 /* =========================
-   REPORT CARD HTML
+   CARDS
 ========================= */
 function createUserReportCard(report, options = {}) {
   const {
@@ -291,7 +334,6 @@ function createUserReportCard(report, options = {}) {
     <div class="report-card">
       <img src="${report.image || DEFAULT_IMAGE}" alt="${report.itemName}">
       <h3>${report.itemName}</h3>
-      <div class="meta"><strong>Type:</strong> ${report.type}</div>
       <div class="meta"><strong>Category:</strong> ${report.category}</div>
       <div class="meta"><strong>Date:</strong> ${report.date}</div>
       <div class="meta"><strong>Location:</strong> ${report.location}</div>
@@ -301,25 +343,11 @@ function createUserReportCard(report, options = {}) {
         <a href="report-details.html?id=${report.id}" class="primary-btn">View</a>
 
         ${
-          showSave ? (
-            showRemoveSaved ? (
-              <button
-                class="secondary-btn"
-                onclick="removeSavedReport(${report.id})"
-              >
-                Remove
-              </button>
-            ) : (
-              <button
-                class="secondary-btn"
-                onclick="toggleSaveReport(${report.id})"
-              >
-                ${isSaved ? "Unsave" : "Save"}
-              </button>
-            )
-          ) : (
-            ""
-          )
+          showSave
+            ? showRemoveSaved
+              ? `<button class="secondary-btn" onclick="removeSavedReport(${report.id})">Remove</button>`
+              : `<button class="secondary-btn" onclick="toggleSaveReport(${report.id})">${isSaved ? "Unsave" : "Save"}</button>`
+            : ""
         }
 
         ${
@@ -340,7 +368,6 @@ function createAdminReportCard(report) {
     <div class="report-card">
       <img src="${report.image || DEFAULT_IMAGE}" alt="${report.itemName}">
       <h3>${report.itemName}</h3>
-      <div class="meta"><strong>Type:</strong> ${report.type}</div>
       <div class="meta"><strong>Category:</strong> ${report.category}</div>
       <div class="meta"><strong>Date:</strong> ${report.date}</div>
       <div class="meta"><strong>Location:</strong> ${report.location}</div>
@@ -356,7 +383,7 @@ function createAdminReportCard(report) {
 }
 
 /* =========================
-   SAVE REPORTS
+   SAVE
 ========================= */
 function toggleSaveReport(reportId) {
   if (!requireUserRole()) return;
@@ -370,7 +397,12 @@ function toggleSaveReport(reportId) {
   }
 
   setSavedReports(savedReports);
-  window.location.reload();
+
+  if (document.getElementById("savedList")) {
+    renderSavedReportsPage();
+  } else {
+    window.location.reload();
+  }
 }
 
 function removeSavedReport(reportId) {
@@ -378,11 +410,11 @@ function removeSavedReport(reportId) {
 
   const updated = getSavedReports().filter((id) => id !== reportId);
   setSavedReports(updated);
-  window.location.reload();
+  renderSavedReportsPage();
 }
 
 /* =========================
-   USER REPORTS PAGE
+   REPORTS PAGE
 ========================= */
 function renderReportsPage() {
   const reportsList = document.getElementById("reportsList");
@@ -423,7 +455,7 @@ function renderReportsPage() {
     });
 
     if (!reports.length) {
-      reportsList.innerHTML = <div class="empty-state">No reports found.</div>;
+      reportsList.innerHTML = `<div class="empty-state">No reports found.</div>`;
       return;
     }
 
@@ -440,7 +472,7 @@ function renderReportsPage() {
 }
 
 /* =========================
-   ADD REPORT PAGE
+   ADD REPORT
 ========================= */
 function setupAddReportForm() {
   const reportForm = document.getElementById("reportForm");
@@ -451,7 +483,6 @@ function setupAddReportForm() {
     e.preventDefault();
 
     const currentUser = getCurrentUser();
-    const type = document.getElementById("reportType").value;
     const itemName = document.getElementById("itemName").value.trim();
     const category = document.getElementById("category").value;
     const description = document.getElementById("description").value.trim();
@@ -467,7 +498,6 @@ function setupAddReportForm() {
       const newReport = {
         id: Date.now(),
         ownerEmail: currentUser.email,
-        type,
         itemName,
         category,
         description,
@@ -477,7 +507,7 @@ function setupAddReportForm() {
         image: imageData || DEFAULT_IMAGE,
       };
 
-      reports.push(newReport);
+      reports.unshift(newReport);
       setReports(reports);
 
       reportMessage.textContent = "Report submitted successfully.";
@@ -485,13 +515,13 @@ function setupAddReportForm() {
 
       setTimeout(() => {
         window.location.href = "my-reports.html";
-      }, 900);
+      }, 700);
     });
   });
 }
 
 /* =========================
-   REPORT DETAILS PAGE
+   DETAILS
 ========================= */
 function renderReportDetailsPage() {
   const reportDetails = document.getElementById("reportDetails");
@@ -503,7 +533,7 @@ function renderReportDetailsPage() {
   const report = reports.find((item) => String(item.id) === String(reportId));
 
   if (!report) {
-    reportDetails.innerHTML = <div class="empty-state">Report not found.</div>;
+    reportDetails.innerHTML = `<div class="empty-state">Report not found.</div>`;
     return;
   }
 
@@ -518,9 +548,7 @@ function renderReportDetailsPage() {
       </div>
 
       <div class="details-content">
-        <div class="details-badge">${report.type}</div>
         <h1>${report.itemName}</h1>
-
         <p><strong>Category:</strong> ${report.category}</p>
         <p><strong>Date:</strong> ${report.date}</p>
         <p><strong>Location:</strong> ${report.location}</p>
@@ -547,7 +575,7 @@ function renderReportDetailsPage() {
 }
 
 /* =========================
-   SAVED REPORTS PAGE
+   SAVED
 ========================= */
 function renderSavedReportsPage() {
   const savedList = document.getElementById("savedList");
@@ -558,7 +586,7 @@ function renderSavedReportsPage() {
   const reports = getReports().filter((report) => savedIds.includes(report.id));
 
   if (!reports.length) {
-    savedList.innerHTML = <div class="empty-state">No saved reports yet.</div>;
+    savedList.innerHTML = `<div class="empty-state">No saved reports yet.</div>`;
     return;
   }
 
@@ -574,7 +602,7 @@ function renderSavedReportsPage() {
 }
 
 /* =========================
-   MY REPORTS PAGE
+   MY REPORTS
 ========================= */
 function renderMyReportsPage() {
   const myReportsList = document.getElementById("myReportsList");
@@ -587,9 +615,7 @@ function renderMyReportsPage() {
   );
 
   if (!reports.length) {
-    myReportsList.innerHTML = (
-      <div class="empty-state">You have not submitted any reports yet.</div>
-    );
+    myReportsList.innerHTML = `<div class="empty-state">You have not submitted any reports yet.</div>`;
     return;
   }
 
@@ -605,7 +631,7 @@ function renderMyReportsPage() {
 }
 
 /* =========================
-   DELETE OWN REPORT
+   DELETE OWN
 ========================= */
 function deleteOwnReport(reportId) {
   const currentUser = getCurrentUser();
@@ -629,7 +655,7 @@ function deleteOwnReport(reportId) {
 }
 
 /* =========================
-   EDIT OWN REPORT PAGE
+   EDIT OWN
 ========================= */
 function setupEditReportForm() {
   const editReportForm = document.getElementById("editReportForm");
@@ -647,7 +673,6 @@ function setupEditReportForm() {
     return;
   }
 
-  document.getElementById("editReportType").value = report.type;
   document.getElementById("editItemName").value = report.itemName;
   document.getElementById("editCategory").value = report.category;
   document.getElementById("editReportDate").value = report.date;
@@ -662,7 +687,6 @@ function setupEditReportForm() {
     const editMessage = document.getElementById("editMessage");
 
     readImage(imageFile, function (imageData) {
-      report.type = document.getElementById("editReportType").value;
       report.itemName = document.getElementById("editItemName").value.trim();
       report.category = document.getElementById("editCategory").value;
       report.date = document.getElementById("editReportDate").value;
@@ -681,13 +705,13 @@ function setupEditReportForm() {
 
       setTimeout(() => {
         window.location.href = "my-reports.html";
-      }, 900);
+      }, 700);
     });
   });
 }
 
 /* =========================
-   PROFILE PAGE
+   PROFILE
 ========================= */
 function setupProfileForm() {
   const profileForm = document.getElementById("profileForm");
@@ -695,9 +719,12 @@ function setupProfileForm() {
   if (!requireUserRole()) return;
 
   const currentUser = getCurrentUser();
-  document.getElementById("profileName").value = currentUser.name;
-  document.getElementById("profileEmail").value = currentUser.email;
-  document.getElementById("profilePhone").value = currentUser.phone;
+  document.getElementById("profileName").value =
+    currentUser.name || "Sara Alqahtani";
+  document.getElementById("profileEmail").value =
+    currentUser.email || "student1@ksu.edu.sa";
+  document.getElementById("profilePhone").value =
+    currentUser.phone || "0551234567";
 
   profileForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -723,7 +750,7 @@ function setupProfileForm() {
 }
 
 /* =========================
-   ADMIN REPORTS PAGE
+   ADMIN REPORTS
 ========================= */
 function renderAdminReportsPage() {
   const adminReportsList = document.getElementById("adminReportsList");
@@ -764,9 +791,7 @@ function renderAdminReportsPage() {
     });
 
     if (!reports.length) {
-      adminReportsList.innerHTML = (
-        <div class="empty-state">No reports found.</div>
-      );
+      adminReportsList.innerHTML = `<div class="empty-state">No reports found.</div>`;
       return;
     }
 
@@ -783,7 +808,7 @@ function renderAdminReportsPage() {
 }
 
 /* =========================
-   ADMIN DELETE ANY REPORT
+   ADMIN DELETE
 ========================= */
 function deleteAnyReport(reportId) {
   if (!requireAdminRole()) return;
@@ -798,7 +823,7 @@ function deleteAnyReport(reportId) {
 }
 
 /* =========================
-   ADMIN EDIT REPORT PAGE
+   ADMIN EDIT
 ========================= */
 function setupAdminEditReportForm() {
   const adminEditReportForm = document.getElementById("adminEditReportForm");
@@ -815,7 +840,6 @@ function setupAdminEditReportForm() {
     return;
   }
 
-  document.getElementById("adminEditReportType").value = report.type;
   document.getElementById("adminEditItemName").value = report.itemName;
   document.getElementById("adminEditCategory").value = report.category;
   document.getElementById("adminEditReportDate").value = report.date;
@@ -830,7 +854,6 @@ function setupAdminEditReportForm() {
     const adminEditMessage = document.getElementById("adminEditMessage");
 
     readImage(imageFile, function (imageData) {
-      report.type = document.getElementById("adminEditReportType").value;
       report.itemName = document
         .getElementById("adminEditItemName")
         .value.trim();
@@ -853,18 +876,21 @@ function setupAdminEditReportForm() {
 
       setTimeout(() => {
         window.location.href = "admin-reports.html";
-      }, 900);
+      }, 700);
     });
   });
 }
 
 /* =========================
-   PAGE INIT
+   INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", function () {
   seedAdminAccount();
-  setupAuthLinks();
+  seedDemoUser();
+  getReports();
+  getSavedReports();
 
+  setupAuthLinks();
   setupLoginForm();
   setupRegisterForm();
 
