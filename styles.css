@@ -579,16 +579,30 @@ textarea {
 .report-card {
   padding: 18px;
 }
-
-.report-card img,
-.report-image,
+.report-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  background: #eef4ff;
+  border-radius: 12px;
+  padding: 10px;
+}
+.report-image {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  background: #eef4ff;
+  border-radius: 12px;
+  padding: 10px;
+}
 .details-image {
   width: 100%;
-  height: 210px;
-  object-fit: cover;
-  border-radius: 18px;
+  max-width: 400px;
+  height: 260px;
+  object-fit: contain;
   background: #eef4ff;
-  margin-bottom: 16px;
+  border-radius: 12px;
+  padding: 15px;
 }
 
 .report-card h3 {

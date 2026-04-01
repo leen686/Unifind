@@ -23,7 +23,7 @@ function setCurrentUser(user) {
 function getSavedReports() {
   const saved = JSON.parse(localStorage.getItem("savedReports"));
   if (saved && Array.isArray(saved)) return saved;
-  const defaultSaved = [1001, 1003];
+  const defaultSaved = [1002, 1003];
   localStorage.setItem("savedReports", JSON.stringify(defaultSaved));
   return defaultSaved;
 }
@@ -36,17 +36,6 @@ function getReports() {
 
   const sampleReports = [
     {
-      id: 1001,
-      ownerEmail: "student1@ksu.edu.sa",
-      itemName: "Student ID Card",
-      category: "ID Card",
-      description: "Blue KSU student ID card lost near the main entrance.",
-      date: "2026-03-20",
-      location: "Building 31",
-      phone: "0500000001",
-      image: DEFAULT_IMAGE,
-    },
-    {
       id: 1002,
       ownerEmail: "student1@ksu.edu.sa",
       itemName: "Black Wallet",
@@ -55,18 +44,18 @@ function getReports() {
       date: "2026-03-21",
       location: "Library",
       phone: "0500000002",
-      image: DEFAULT_IMAGE,
+      image: "images/wallet.jpeg",
     },
     {
       id: 1003,
       ownerEmail: "student2@ksu.edu.sa",
       itemName: "Car Keys",
       category: "Keys",
-      description: "Set of silver keys with a blue keychain.",
+      description: "Set of silver keys.",
       date: "2026-03-18",
       location: "Parking Area",
       phone: "0500000003",
-      image: DEFAULT_IMAGE,
+      image: "images/car key.jpeg",
     },
     {
       id: 1004,
@@ -77,7 +66,7 @@ function getReports() {
       date: "2026-03-17",
       location: "Building 5",
       phone: "0500000004",
-      image: DEFAULT_IMAGE,
+      image: "images/backpack.webp",
     },
     {
       id: 1005,
@@ -88,7 +77,7 @@ function getReports() {
       date: "2026-03-16",
       location: "Cafeteria",
       phone: "0500000005",
-      image: DEFAULT_IMAGE,
+      image: "images/airpods.webp",
     },
   ];
 
