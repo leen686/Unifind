@@ -226,7 +226,7 @@ function setupLoginForm() {
       setCurrentUser(admin);
       message.textContent = "Admin login successful. Redirecting...";
       setTimeout(() => {
-        window.location.href = "admin-dashboard.html";
+        window.location.href = "admin-reports.html";
       }, 700);
       return;
     }
