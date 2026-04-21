@@ -1,3 +1,40 @@
+<?php
+session_start();
+include 'db.php';
+
+$firstName = $_POST['firstName'] ?? '';
+$lastName = $_POST['lastName'] ?? '';
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
+$phone = $_POST['phone'] ?? '';
+
+if (!$firstName || !$lastName || !$email || !$password) {
+    die("Please fill all required fields.");
+}
+
+$check = $conn->prepare("SELECT userID FROM users WHERE email = ?");
+$check->bind_param("s", $email);
+$check->execute();
+$result = $check->get_result();
+
+if ($result->num_rows > 0) {
+    die("Email already exists.");
+}
+
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+$stmt = $conn->prepare("INSERT INTO users (firstName, lastName, email, password, phone) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("sssss", $firstName, $lastName, $email, $hashedPassword, $phone);
+
+if ($stmt->execute()) {
+    $_SESSION['userID'] = $stmt->insert_id;
+    $_SESSION['role'] = 'user';
+    header("Location: ../reports.html");
+    exit();
+} else {
+    echo "Registration failed.";
+}
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -29,7 +66,7 @@
             manage your profile.
           </p>
 
-          <form id="registerForm">
+          <form id="registerForm" action="register.php" method="POST">
             <div class="form-group">
               <label for="registerName">Full Name</label>
               <div class="input-with-icon">

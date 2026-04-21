@@ -1,3 +1,49 @@
+<?php
+session_start();
+include 'db.php';
+
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
+$role = $_POST['role'] ?? 'user';
+
+if ($role === 'admin') {
+    $stmt = $conn->prepare("SELECT adminID, email, password FROM administrators WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $admin = $result->fetch_assoc();
+
+        if ($password === $admin['password']) {
+            $_SESSION['adminID'] = $admin['adminID'];
+            $_SESSION['role'] = 'admin';
+            header("Location: ../admin-reports.html");
+            exit();
+        }
+    }
+
+    die("Invalid admin login.");
+}
+
+$stmt = $conn->prepare("SELECT userID, email, password FROM users WHERE email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 1) {
+    $user = $result->fetch_assoc();
+
+    if (password_verify($password, $user['password'])) {
+        $_SESSION['userID'] = $user['userID'];
+        $_SESSION['role'] = 'user';
+        header("Location: ../reports.html");
+        exit();
+    }
+}
+
+die("Invalid user login.");
+?>
 <!doctype html>
 <html lang="en">
   <head>
