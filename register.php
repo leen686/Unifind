@@ -3,6 +3,7 @@ session_start();
 include 'db.php';
 
 $message = "";
+$messageType = "error";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $fullName = trim($_POST['registerName'] ?? '');
@@ -10,8 +11,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $phone = trim($_POST['registerPhone'] ?? '');
     $password = trim($_POST['registerPassword'] ?? '');
 
-    if ($fullName === '' || $email === '' || $phone === '' || $password === '') {
-        $message = "Please fill all required fields.";
+    if ($fullName === '') {
+        $message = "Full name is required.";
+    } elseif (strlen($fullName) < 3) {
+        $message = "Full name must be at least 3 characters.";
+    } elseif ($email === '') {
+        $message = "Email address is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $message = "Please enter a valid email address.";
+    } elseif ($phone === '') {
+        $message = "Phone number is required.";
+    } elseif (!preg_match('/^05[0-9]{8}$/', $phone)) {
+        $message = "Phone number must start with 05 and contain 10 digits.";
+    } elseif ($password === '') {
+        $message = "Password is required.";
+    } elseif (strlen($password) < 6) {
+        $message = "Password must be at least 6 characters.";
     } else {
         $nameParts = explode(' ', $fullName, 2);
         $firstName = $nameParts[0];
@@ -23,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $result = $check->get_result();
 
         if ($result->num_rows > 0) {
-            $message = "This email is already registered.";
+            $message = "This email is already registered. Please sign in instead.";
         } else {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -40,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 header("Location: reports.php");
                 exit();
             } else {
-                $message = "Registration failed.";
+                $message = "Registration failed. Please try again.";
             }
         }
     }
@@ -89,6 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                   id="registerName"
                   name="registerName"
                   placeholder="Enter your full name"
+                  value="<?php echo htmlspecialchars($_POST['registerName'] ?? ''); ?>"
                   required
                 />
               </div>
@@ -103,6 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                   id="registerEmail"
                   name="registerEmail"
                   placeholder="Enter your email"
+                  value="<?php echo htmlspecialchars($_POST['registerEmail'] ?? ''); ?>"
                   required
                 />
               </div>
@@ -116,7 +133,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                   type="text"
                   id="registerPhone"
                   name="registerPhone"
-                  placeholder="Enter your phone number"
+                  placeholder="Example: 05XXXXXXXX"
+                  value="<?php echo htmlspecialchars($_POST['registerPhone'] ?? ''); ?>"
                   required
                 />
               </div>
@@ -130,7 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                   type="password"
                   id="registerPassword"
                   name="registerPassword"
-                  placeholder="Create a password"
+                  placeholder="At least 6 characters"
                   required
                 />
               </div>
@@ -139,7 +157,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <button type="submit" class="primary-btn form-btn">Sign Up</button>
 
             <?php if ($message !== ""): ?>
-              <p class="form-message"><?php echo htmlspecialchars($message); ?></p>
+              <p class="form-message <?php echo $messageType; ?>">
+                <?php echo htmlspecialchars($message); ?>
+              </p>
             <?php endif; ?>
           </form>
 

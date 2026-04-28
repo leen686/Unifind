@@ -9,25 +9,51 @@ if (!isset($_SESSION['userID']) || $_SESSION['role'] !== 'user') {
 
 $userID = $_SESSION['userID'];
 $message = "";
+$messageType = "error";
+
+function isValidPhone($phone) {
+    return preg_match('/^05[0-9]{8}$/', $phone);
+}
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $fullName = trim($_POST['profileName'] ?? '');
+    $email = trim($_POST['profileEmail'] ?? '');
     $phone = trim($_POST['profilePhone'] ?? '');
 
-    if ($fullName === '' || $phone === '') {
-        $message = "Please fill all required fields.";
+    if ($fullName === '') {
+        $message = "Full name is required.";
+    } elseif (strlen($fullName) < 3) {
+        $message = "Full name must be at least 3 characters.";
+    } elseif ($email === '') {
+        $message = "Email address is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $message = "Please enter a valid email address.";
+    } elseif ($phone === '') {
+        $message = "Phone number is required.";
+    } elseif (!isValidPhone($phone)) {
+        $message = "Phone number must start with 05 and contain 10 digits.";
     } else {
-        $nameParts = explode(' ', $fullName, 2);
-        $firstName = $nameParts[0];
-        $lastName = $nameParts[1] ?? '-';
+        $check = $conn->prepare("SELECT userID FROM users WHERE email = ? AND userID != ?");
+        $check->bind_param("si", $email, $userID);
+        $check->execute();
+        $checkResult = $check->get_result();
 
-        $stmt = $conn->prepare("UPDATE users SET firstName = ?, lastName = ?, phone = ? WHERE userID = ?");
-        $stmt->bind_param("sssi", $firstName, $lastName, $phone, $userID);
-
-        if ($stmt->execute()) {
-            $message = "Profile updated successfully.";
+        if ($checkResult->num_rows > 0) {
+            $message = "This email is already used by another account.";
         } else {
-            $message = "Failed to update profile.";
+            $nameParts = explode(' ', $fullName, 2);
+            $firstName = $nameParts[0];
+            $lastName = $nameParts[1] ?? '-';
+
+            $stmt = $conn->prepare("UPDATE users SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE userID = ?");
+            $stmt->bind_param("ssssi", $firstName, $lastName, $email, $phone, $userID);
+
+            if ($stmt->execute()) {
+                $message = "Profile updated successfully.";
+                $messageType = "success";
+            } else {
+                $message = "Failed to update profile. Please try again.";
+            }
         }
     }
 }
@@ -43,6 +69,10 @@ if ($result->num_rows !== 1) {
 
 $user = $result->fetch_assoc();
 $fullName = trim($user['firstName'] . " " . $user['lastName']);
+
+$displayName = $_POST['profileName'] ?? $fullName;
+$displayEmail = $_POST['profileEmail'] ?? $user['email'];
+$displayPhone = $_POST['profilePhone'] ?? $user['phone'];
 ?>
 
 <!doctype html>
@@ -84,7 +114,7 @@ $fullName = trim($user['firstName'] . " " . $user['lastName']);
           <div class="profile-top">
             <div class="profile-avatar">👤</div>
             <div>
-              <h2 id="profileDisplayName"><?php echo htmlspecialchars($fullName); ?></h2>
+              <h2 id="profileDisplayName"><?php echo htmlspecialchars($displayName); ?></h2>
               <p class="profile-subtext">Manage your personal information</p>
             </div>
           </div>
@@ -96,7 +126,7 @@ $fullName = trim($user['firstName'] . " " . $user['lastName']);
                 type="text" 
                 id="profileName" 
                 name="profileName"
-                value="<?php echo htmlspecialchars($fullName); ?>" 
+                value="<?php echo htmlspecialchars($displayName); ?>" 
                 disabled 
                 required
               />
@@ -107,8 +137,10 @@ $fullName = trim($user['firstName'] . " " . $user['lastName']);
               <input 
                 type="email" 
                 id="profileEmail" 
-                value="<?php echo htmlspecialchars($user['email']); ?>" 
+                name="profileEmail"
+                value="<?php echo htmlspecialchars($displayEmail); ?>" 
                 disabled 
+                required
               />
             </div>
 
@@ -118,7 +150,7 @@ $fullName = trim($user['firstName'] . " " . $user['lastName']);
                 type="text" 
                 id="profilePhone" 
                 name="profilePhone"
-                value="<?php echo htmlspecialchars($user['phone']); ?>" 
+                value="<?php echo htmlspecialchars($displayPhone); ?>" 
                 disabled 
                 required
               />
@@ -139,7 +171,9 @@ $fullName = trim($user['firstName'] . " " . $user['lastName']);
             </div>
 
             <?php if ($message !== ""): ?>
-              <p class="form-message"><?php echo htmlspecialchars($message); ?></p>
+              <p class="form-message <?php echo $messageType; ?>">
+                <?php echo htmlspecialchars($message); ?>
+              </p>
             <?php endif; ?>
           </form>
 
@@ -169,10 +203,12 @@ $fullName = trim($user['firstName'] . " " . $user['lastName']);
       const editBtn = document.getElementById("editProfileBtn");
       const saveBtn = document.getElementById("saveProfileBtn");
       const nameInput = document.getElementById("profileName");
+      const emailInput = document.getElementById("profileEmail");
       const phoneInput = document.getElementById("profilePhone");
 
       editBtn.addEventListener("click", function () {
         nameInput.disabled = false;
+        emailInput.disabled = false;
         phoneInput.disabled = false;
         editBtn.classList.add("hidden");
         saveBtn.classList.remove("hidden");
@@ -180,6 +216,7 @@ $fullName = trim($user['firstName'] . " " . $user['lastName']);
 
       document.getElementById("profileForm").addEventListener("submit", function () {
         nameInput.disabled = false;
+        emailInput.disabled = false;
         phoneInput.disabled = false;
       });
     </script>

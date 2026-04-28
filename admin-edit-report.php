@@ -9,6 +9,16 @@ if (!isset($_SESSION['adminID']) || $_SESSION['role'] !== 'admin') {
 
 $reportID = intval($_GET['id'] ?? 0);
 $message = "";
+$messageType = "error";
+
+function isValidPhone($phone) {
+    return preg_match('/^05[0-9]{8}$/', $phone);
+}
+
+function isValidImage($file) {
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+    return isset($file['type']) && in_array($file['type'], $allowedTypes);
+}
 
 if ($reportID <= 0) {
     header("Location: admin-reports.php");
@@ -39,8 +49,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $description = trim($_POST['description'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
 
-    if ($itemName === '' || $category === '' || $reportDate === '' || $location === '' || $description === '' || $phone === '') {
-        $message = "Please fill all required fields.";
+    if ($itemName === '') {
+        $message = "Item name is required.";
+    } elseif (strlen($itemName) < 2) {
+        $message = "Item name must be at least 2 characters.";
+    } elseif ($category === '') {
+        $message = "Please select a category.";
+    } elseif ($reportDate === '') {
+        $message = "Date is required.";
+    } elseif ($location === '') {
+        $message = "Location is required.";
+    } elseif (strlen($location) < 2) {
+        $message = "Location must be at least 2 characters.";
+    } elseif ($description === '') {
+        $message = "Description is required.";
+    } elseif (strlen($description) < 10) {
+        $message = "Description must be at least 10 characters.";
+    } elseif ($phone === '') {
+        $message = "Phone number is required.";
+    } elseif (!isValidPhone($phone)) {
+        $message = "Phone number must start with 05 and contain 10 digits.";
+    } elseif (isset($_FILES['image']) && $_FILES['image']['error'] === 0 && !isValidImage($_FILES['image'])) {
+        $message = "Only JPG, PNG, JPEG, or WEBP images are allowed.";
     } else {
         $catStmt = $conn->prepare("SELECT catID FROM categories WHERE catName = ?");
         $catStmt->bind_param("s", $category);
@@ -48,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $catResult = $catStmt->get_result();
 
         if ($catResult->num_rows !== 1) {
-            $message = "Invalid category.";
+            $message = "Invalid category. Please select a valid category.";
         } else {
             $catID = $catResult->fetch_assoc()['catID'];
             $imagePath = $report['imageURL'];
@@ -60,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 if (move_uploaded_file($_FILES["image"]["tmp_name"], $targetPath)) {
                     $imagePath = $targetPath;
                 } else {
-                    $message = "Failed to upload image.";
+                    $message = "Failed to upload image. Please try again.";
                 }
             }
 
@@ -90,12 +120,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     header("Location: admin-reports.php");
                     exit();
                 } else {
-                    $message = "Failed to update report.";
+                    $message = "Failed to update report. Please try again.";
                 }
             }
         }
     }
 }
+
+$displayItemName = $_POST['itemName'] ?? $report['item_name'];
+$displayCategory = $_POST['category'] ?? $report['catName'];
+$displayDate = $_POST['reportDate'] ?? $report['date'];
+$displayLocation = $_POST['location'] ?? $report['location'];
+$displayDescription = $_POST['description'] ?? $report['description'];
+$displayPhone = $_POST['phone'] ?? $report['phone'];
 ?>
 
 <!doctype html>
@@ -137,7 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 type="text"
                 id="adminEditItemName"
                 name="itemName"
-                value="<?php echo htmlspecialchars($report['item_name']); ?>"
+                value="<?php echo htmlspecialchars($displayItemName); ?>"
                 required
               />
             </div>
@@ -149,7 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                   <?php
                     $categories = ["ID Card", "Phone", "Wallet", "Keys", "Bag", "Other"];
                     foreach ($categories as $cat) {
-                        $selected = ($cat === $report['catName']) ? "selected" : "";
+                        $selected = ($cat === $displayCategory) ? "selected" : "";
                         echo "<option value=\"$cat\" $selected>$cat</option>";
                     }
                   ?>
@@ -162,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                   type="date"
                   id="adminEditReportDate"
                   name="reportDate"
-                  value="<?php echo htmlspecialchars($report['date']); ?>"
+                  value="<?php echo htmlspecialchars($displayDate); ?>"
                   required
                 />
               </div>
@@ -174,7 +211,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 type="text"
                 id="adminEditLocation"
                 name="location"
-                value="<?php echo htmlspecialchars($report['location']); ?>"
+                value="<?php echo htmlspecialchars($displayLocation); ?>"
                 required
               />
             </div>
@@ -186,7 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 name="description"
                 rows="6"
                 required
-              ><?php echo htmlspecialchars($report['description']); ?></textarea>
+              ><?php echo htmlspecialchars($displayDescription); ?></textarea>
             </div>
 
             <div class="form-group">
@@ -195,7 +232,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 type="text"
                 id="adminEditPhone"
                 name="phone"
-                value="<?php echo htmlspecialchars($report['phone']); ?>"
+                value="<?php echo htmlspecialchars($displayPhone); ?>"
                 required
               />
             </div>
@@ -215,7 +252,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </button>
 
             <?php if ($message !== ""): ?>
-              <p class="form-message"><?php echo htmlspecialchars($message); ?></p>
+              <p class="form-message <?php echo $messageType; ?>">
+                <?php echo htmlspecialchars($message); ?>
+              </p>
             <?php endif; ?>
           </form>
         </div>

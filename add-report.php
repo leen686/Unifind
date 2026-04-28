@@ -8,6 +8,16 @@ if (!isset($_SESSION['userID']) || $_SESSION['role'] !== 'user') {
 }
 
 $message = "";
+$messageType = "error";
+
+function isValidPhone($phone) {
+    return preg_match('/^05[0-9]{8}$/', $phone);
+}
+
+function isValidImage($file) {
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+    return isset($file['type']) && in_array($file['type'], $allowedTypes);
+}
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $itemName = trim($_POST['itemName'] ?? '');
@@ -17,17 +27,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $description = trim($_POST['description'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
 
-    if (
-        $itemName === '' ||
-        $category === '' ||
-        $reportDate === '' ||
-        $location === '' ||
-        $description === '' ||
-        $phone === ''
-    ) {
-        $message = "Please fill all required fields.";
+    if ($itemName === '') {
+        $message = "Item name is required.";
+    } elseif (strlen($itemName) < 2) {
+        $message = "Item name must be at least 2 characters.";
+    } elseif ($category === '') {
+        $message = "Please select a category.";
+    } elseif ($reportDate === '') {
+        $message = "Date is required.";
+    } elseif ($location === '') {
+        $message = "Location is required.";
+    } elseif (strlen($location) < 2) {
+        $message = "Location must be at least 2 characters.";
+    } elseif ($description === '') {
+        $message = "Description is required.";
+    } elseif (strlen($description) < 10) {
+        $message = "Description must be at least 10 characters.";
+    } elseif ($phone === '') {
+        $message = "Phone number is required.";
+    } elseif (!isValidPhone($phone)) {
+        $message = "Phone number must start with 05 and contain 10 digits.";
     } elseif (!isset($_FILES['image']) || $_FILES['image']['error'] !== 0) {
-        $message = "Image is required.";
+        $message = "Please upload an image for the report.";
+    } elseif (!isValidImage($_FILES['image'])) {
+        $message = "Only JPG, PNG, JPEG, or WEBP images are allowed.";
     } else {
         $catStmt = $conn->prepare("SELECT catID FROM categories WHERE catName = ?");
         $catStmt->bind_param("s", $category);
@@ -35,16 +58,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $catResult = $catStmt->get_result();
 
         if ($catResult->num_rows !== 1) {
-            $message = "Invalid category.";
+            $message = "Invalid category. Please select a valid category.";
         } else {
-            $catRow = $catResult->fetch_assoc();
-            $catID = $catRow['catID'];
+            $catID = $catResult->fetch_assoc()['catID'];
 
             $imageName = time() . "_" . basename($_FILES["image"]["name"]);
             $targetPath = "uploads/" . $imageName;
 
             if (!move_uploaded_file($_FILES["image"]["tmp_name"], $targetPath)) {
-                $message = "Failed to upload image.";
+                $message = "Failed to upload image. Please try again.";
             } else {
                 $userID = $_SESSION['userID'];
                 $adminID = null;
@@ -72,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     header("Location: my-reports.php");
                     exit();
                 } else {
-                    $message = "Failed to submit report.";
+                    $message = "Failed to submit report. Please try again.";
                 }
             }
         }
@@ -124,6 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 id="itemName"
                 name="itemName"
                 placeholder="Enter item name"
+                value="<?php echo htmlspecialchars($_POST['itemName'] ?? ''); ?>"
                 required
               />
             </div>
@@ -133,18 +156,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for="category">Category</label>
                 <select id="category" name="category" required>
                   <option value="">Select Category</option>
-                  <option value="ID Card">ID Card</option>
-                  <option value="Phone">Phone</option>
-                  <option value="Wallet">Wallet</option>
-                  <option value="Keys">Keys</option>
-                  <option value="Bag">Bag</option>
-                  <option value="Other">Other</option>
+                  <?php
+                    $categories = ["ID Card", "Phone", "Wallet", "Keys", "Bag", "Other"];
+                    $selectedCategory = $_POST['category'] ?? '';
+                    foreach ($categories as $cat) {
+                        $selected = ($selectedCategory === $cat) ? "selected" : "";
+                        echo "<option value=\"$cat\" $selected>$cat</option>";
+                    }
+                  ?>
                 </select>
               </div>
 
               <div class="form-group">
                 <label for="reportDate">Date</label>
-                <input type="date" id="reportDate" name="reportDate" required />
+                <input
+                  type="date"
+                  id="reportDate"
+                  name="reportDate"
+                  value="<?php echo htmlspecialchars($_POST['reportDate'] ?? ''); ?>"
+                  required
+                />
               </div>
             </div>
 
@@ -155,6 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 id="location"
                 name="location"
                 placeholder="Enter location"
+                value="<?php echo htmlspecialchars($_POST['location'] ?? ''); ?>"
                 required
               />
             </div>
@@ -167,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 rows="6"
                 placeholder="Describe the item clearly"
                 required
-              ></textarea>
+              ><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
             </div>
 
             <div class="form-group">
@@ -176,7 +208,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 type="text"
                 id="phone"
                 name="phone"
-                placeholder="Enter phone number"
+                placeholder="Example: 05XXXXXXXX"
+                value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>"
                 required
               />
             </div>
@@ -191,7 +224,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </button>
 
             <?php if ($message !== ""): ?>
-              <p class="form-message"><?php echo htmlspecialchars($message); ?></p>
+              <p class="form-message <?php echo $messageType; ?>">
+                <?php echo htmlspecialchars($message); ?>
+              </p>
             <?php endif; ?>
           </form>
         </div>

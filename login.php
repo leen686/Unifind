@@ -3,53 +3,55 @@ session_start();
 include 'db.php';
 
 $message = "";
+$messageType = "error";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST['loginEmail'] ?? '');
     $password = trim($_POST['loginPassword'] ?? '');
-    $role = trim($_POST['loginRole'] ?? 'user');
 
-    if ($email === '' || $password === '') {
-        $message = "Please enter your email and password.";
+    if ($email === '') {
+        $message = "Email address is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $message = "Please enter a valid email address.";
+    } elseif ($password === '') {
+        $message = "Password is required.";
     } else {
-        if ($role === "admin") {
-            $stmt = $conn->prepare("SELECT adminID, email, password FROM administrators WHERE email = ?");
-            $stmt->bind_param("s", $email);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        $stmt = $conn->prepare("SELECT adminID, email, password FROM administrators WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $adminResult = $stmt->get_result();
 
-            if ($result->num_rows === 1) {
-                $admin = $result->fetch_assoc();
+        if ($adminResult->num_rows === 1) {
+            $admin = $adminResult->fetch_assoc();
 
-                if ($password === $admin['password']) {
-                    $_SESSION['adminID'] = $admin['adminID'];
-                    $_SESSION['role'] = 'admin';
-
-                    header("Location: admin-reports.php");
-                    exit();
-                }
+            if ($password === $admin['password']) {
+                $_SESSION['adminID'] = $admin['adminID'];
+                $_SESSION['role'] = 'admin';
+                header("Location: admin-reports.php");
+                exit();
+            } else {
+                $message = "Incorrect password. Please try again.";
             }
-
-            $message = "Invalid admin email or password.";
         } else {
             $stmt = $conn->prepare("SELECT userID, email, password FROM users WHERE email = ?");
             $stmt->bind_param("s", $email);
             $stmt->execute();
-            $result = $stmt->get_result();
+            $userResult = $stmt->get_result();
 
-            if ($result->num_rows === 1) {
-                $user = $result->fetch_assoc();
+            if ($userResult->num_rows === 1) {
+                $user = $userResult->fetch_assoc();
 
                 if (password_verify($password, $user['password'])) {
                     $_SESSION['userID'] = $user['userID'];
                     $_SESSION['role'] = 'user';
-
                     header("Location: reports.php");
                     exit();
+                } else {
+                    $message = "Incorrect password. Please try again.";
                 }
+            } else {
+                $message = "No account found with this email. Please sign up first.";
             }
-
-            $message = "Invalid user email or password.";
         }
     }
 }
@@ -83,11 +85,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="auth-card modern-auth-card">
           <h1>Login</h1>
           <p class="auth-subtitle">
-            Welcome back! Sign in to access your reports, saved items, and
-            profile.
+            Sign in using your account email. The system will automatically detect whether you are a user or an admin.
           </p>
 
-          <form id="loginForm" action="login.php" method="POST">
+          <form action="login.php" method="POST">
             <div class="form-group">
               <label for="loginEmail">Email Address</label>
               <div class="input-with-icon">
@@ -97,6 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                   id="loginEmail"
                   name="loginEmail"
                   placeholder="Enter your email"
+                  value="<?php echo htmlspecialchars($_POST['loginEmail'] ?? ''); ?>"
                   required
                 />
               </div>
@@ -116,28 +118,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
               </div>
             </div>
 
-            <input type="hidden" id="loginRole" name="loginRole" value="user" />
-
-            <div class="login-action-stack">
-              <button
-                type="submit"
-                class="primary-btn auth-action-btn"
-                onclick="document.getElementById('loginRole').value='user'"
-              >
-                Login as User →
-              </button>
-
-              <button
-                type="submit"
-                class="secondary-btn auth-action-btn"
-                onclick="document.getElementById('loginRole').value='admin'"
-              >
-                Login as Admin →
-              </button>
-            </div>
+            <button type="submit" class="primary-btn form-btn">Sign In</button>
 
             <?php if ($message !== ""): ?>
-              <p class="form-message"><?php echo htmlspecialchars($message); ?></p>
+              <p class="form-message <?php echo $messageType; ?>">
+                <?php echo htmlspecialchars($message); ?>
+              </p>
             <?php endif; ?>
           </form>
 
@@ -145,28 +131,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             New to UniFind?
             <a href="register.php">Sign up</a>
           </p>
-
-          <div class="mini-info-box">
-            <strong>Admin demo account</strong><br />
-            Email: admin@unifind.com<br />
-            Password: admin123
-          </div>
         </div>
       </div>
     </main>
 
     <footer class="site-footer clean-footer">
       <div class="container clean-footer-content">
-        <h3>
-          <span class="footer-dark">Uni</span><span class="footer-blue">Find</span>
-        </h3>
+        <h3><span class="footer-dark">Uni</span><span class="footer-blue">Find</span></h3>
         <p>©️ 2026 UniFind. Built for students, by students.</p>
-
-        <div class="clean-footer-links">
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Contact</a>
-        </div>
       </div>
     </footer>
   </body>
