@@ -2,39 +2,51 @@
 session_start();
 include 'db.php';
 
-$firstName = $_POST['firstName'] ?? '';
-$lastName = $_POST['lastName'] ?? '';
-$email = $_POST['email'] ?? '';
-$password = $_POST['password'] ?? '';
-$phone = $_POST['phone'] ?? '';
+$message = "";
 
-if (!$firstName || !$lastName || !$email || !$password) {
-    die("Please fill all required fields.");
-}
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $fullName = trim($_POST['registerName'] ?? '');
+    $email = trim($_POST['registerEmail'] ?? '');
+    $phone = trim($_POST['registerPhone'] ?? '');
+    $password = trim($_POST['registerPassword'] ?? '');
 
-$check = $conn->prepare("SELECT userID FROM users WHERE email = ?");
-$check->bind_param("s", $email);
-$check->execute();
-$result = $check->get_result();
+    if ($fullName === '' || $email === '' || $phone === '' || $password === '') {
+        $message = "Please fill all required fields.";
+    } else {
+        $nameParts = explode(' ', $fullName, 2);
+        $firstName = $nameParts[0];
+        $lastName = $nameParts[1] ?? '-';
 
-if ($result->num_rows > 0) {
-    die("Email already exists.");
-}
+        $check = $conn->prepare("SELECT userID FROM users WHERE email = ?");
+        $check->bind_param("s", $email);
+        $check->execute();
+        $result = $check->get_result();
 
-$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        if ($result->num_rows > 0) {
+            $message = "This email is already registered.";
+        } else {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-$stmt = $conn->prepare("INSERT INTO users (firstName, lastName, email, password, phone) VALUES (?, ?, ?, ?, ?)");
-$stmt->bind_param("sssss", $firstName, $lastName, $email, $hashedPassword, $phone);
+            $stmt = $conn->prepare(
+                "INSERT INTO users (firstName, lastName, email, password, phone)
+                 VALUES (?, ?, ?, ?, ?)"
+            );
 
-if ($stmt->execute()) {
-    $_SESSION['userID'] = $stmt->insert_id;
-    $_SESSION['role'] = 'user';
-    header("Location: ../reports.html");
-    exit();
-} else {
-    echo "Registration failed.";
+            $stmt->bind_param("sssss", $firstName, $lastName, $email, $hashedPassword, $phone);
+
+            if ($stmt->execute()) {
+                $_SESSION['userID'] = $stmt->insert_id;
+                $_SESSION['role'] = 'user';
+                header("Location: reports.php");
+                exit();
+            } else {
+                $message = "Registration failed.";
+            }
+        }
+    }
 }
 ?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -43,16 +55,17 @@ if ($stmt->execute()) {
     <title>UniFind | Register</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
+
   <body data-page="register">
     <header class="main-header">
       <div class="container navbar">
-        <a href="index.html" class="logo">
+        <a href="index.php" class="logo">
           <img src="images/logo.jpeg" alt="Unified Logo" class="logo-rect" />
         </a>
 
         <nav class="nav-links">
-          <a href="index.html" class="nav-link-text">Home</a>
-          <a href="login.html" class="nav-btn secondary-btn">Sign In</a>
+          <a href="index.php" class="nav-link-text">Home</a>
+          <a href="login.php" class="nav-btn secondary-btn">Sign In</a>
         </nav>
       </div>
     </header>
@@ -74,6 +87,7 @@ if ($stmt->execute()) {
                 <input
                   type="text"
                   id="registerName"
+                  name="registerName"
                   placeholder="Enter your full name"
                   required
                 />
@@ -87,6 +101,7 @@ if ($stmt->execute()) {
                 <input
                   type="email"
                   id="registerEmail"
+                  name="registerEmail"
                   placeholder="Enter your email"
                   required
                 />
@@ -100,6 +115,7 @@ if ($stmt->execute()) {
                 <input
                   type="text"
                   id="registerPhone"
+                  name="registerPhone"
                   placeholder="Enter your phone number"
                   required
                 />
@@ -113,6 +129,7 @@ if ($stmt->execute()) {
                 <input
                   type="password"
                   id="registerPassword"
+                  name="registerPassword"
                   placeholder="Create a password"
                   required
                 />
@@ -120,12 +137,15 @@ if ($stmt->execute()) {
             </div>
 
             <button type="submit" class="primary-btn form-btn">Sign Up</button>
-            <p id="registerMessage" class="form-message"></p>
+
+            <?php if ($message !== ""): ?>
+              <p class="form-message"><?php echo htmlspecialchars($message); ?></p>
+            <?php endif; ?>
           </form>
 
           <p class="auth-footer-text center-text">
             Already have an account?
-            <a href="login.html">Sign in</a>
+            <a href="login.php">Sign in</a>
           </p>
         </div>
       </div>
@@ -134,10 +154,9 @@ if ($stmt->execute()) {
     <footer class="site-footer clean-footer">
       <div class="container clean-footer-content">
         <h3>
-          <span class="footer-dark">Uni</span
-          ><span class="footer-blue">Find</span>
+          <span class="footer-dark">Uni</span><span class="footer-blue">Find</span>
         </h3>
-        <p>© 2026 UniFind. Built for students, by students.</p>
+        <p>©️ 2026 UniFind. Built for students, by students.</p>
 
         <div class="clean-footer-links">
           <a href="#">Privacy</a>
@@ -146,7 +165,5 @@ if ($stmt->execute()) {
         </div>
       </div>
     </footer>
-
-    <script src="app.js"></script>
   </body>
 </html>

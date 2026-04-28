@@ -9,13 +9,13 @@
   <body data-page="index">
     <header class="main-header">
       <div class="container navbar">
-        <a href="index.html" class="logo">
+        <a href="index.php" class="logo">
           <img src="images/logo.jpeg" alt="Unified Logo" class="logo-rect" />
         </a>
 
         <nav class="nav-links">
-          <a href="login.html" class="nav-btn secondary-btn">Sign In</a>
-          <a href="register.html" class="nav-btn primary-btn">Sign Up</a>
+          <a href="login.php" class="nav-btn secondary-btn">Sign In</a>
+          <a href="register.php" class="nav-btn primary-btn">Sign Up</a>
         </nav>
       </div>
     </header>
@@ -38,10 +38,10 @@
           </p>
 
           <div class="hero-actions">
-            <a href="register.html" class="primary-btn large-btn"
+            <a href="register.php" class="primary-btn large-btn"
               >Get Started</a
             >
-            <a href="login.html" class="secondary-btn large-btn">Sign In</a>
+            <a href="login.php" class="secondary-btn large-btn">Sign In</a>
           </div>
         </div>
       </section>
@@ -141,10 +141,10 @@
           </p>
 
           <div class="hero-actions">
-            <a href="register.html" class="primary-btn large-btn"
+            <a href="register.php" class="primary-btn large-btn"
               >Create Account</a
             >
-            <a href="login.html" class="secondary-btn large-btn">Sign In</a>
+            <a href="login.php" class="secondary-btn large-btn">Sign In</a>
           </div>
         </div>
       </section>

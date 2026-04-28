@@ -2,48 +2,59 @@
 session_start();
 include 'db.php';
 
-$email = $_POST['email'] ?? '';
-$password = $_POST['password'] ?? '';
-$role = $_POST['role'] ?? 'user';
+$message = "";
 
-if ($role === 'admin') {
-    $stmt = $conn->prepare("SELECT adminID, email, password FROM administrators WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $email = trim($_POST['loginEmail'] ?? '');
+    $password = trim($_POST['loginPassword'] ?? '');
+    $role = trim($_POST['loginRole'] ?? 'user');
 
-    if ($result->num_rows === 1) {
-        $admin = $result->fetch_assoc();
+    if ($email === '' || $password === '') {
+        $message = "Please enter your email and password.";
+    } else {
+        if ($role === "admin") {
+            $stmt = $conn->prepare("SELECT adminID, email, password FROM administrators WHERE email = ?");
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-        if ($password === $admin['password']) {
-            $_SESSION['adminID'] = $admin['adminID'];
-            $_SESSION['role'] = 'admin';
-            header("Location: ../admin-reports.html");
-            exit();
+            if ($result->num_rows === 1) {
+                $admin = $result->fetch_assoc();
+
+                if ($password === $admin['password']) {
+                    $_SESSION['adminID'] = $admin['adminID'];
+                    $_SESSION['role'] = 'admin';
+
+                    header("Location: admin-reports.php");
+                    exit();
+                }
+            }
+
+            $message = "Invalid admin email or password.";
+        } else {
+            $stmt = $conn->prepare("SELECT userID, email, password FROM users WHERE email = ?");
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows === 1) {
+                $user = $result->fetch_assoc();
+
+                if (password_verify($password, $user['password'])) {
+                    $_SESSION['userID'] = $user['userID'];
+                    $_SESSION['role'] = 'user';
+
+                    header("Location: reports.php");
+                    exit();
+                }
+            }
+
+            $message = "Invalid user email or password.";
         }
     }
-
-    die("Invalid admin login.");
 }
-
-$stmt = $conn->prepare("SELECT userID, email, password FROM users WHERE email = ?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 1) {
-    $user = $result->fetch_assoc();
-
-    if (password_verify($password, $user['password'])) {
-        $_SESSION['userID'] = $user['userID'];
-        $_SESSION['role'] = 'user';
-        header("Location: ../reports.html");
-        exit();
-    }
-}
-
-die("Invalid user login.");
 ?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -52,15 +63,17 @@ die("Invalid user login.");
     <title>UniFind | Login</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
+
   <body data-page="login">
     <header class="main-header">
       <div class="container navbar">
-        <a href="index.html" class="logo">
+        <a href="index.php" class="logo">
           <img src="images/logo.jpeg" alt="Unified Logo" class="logo-rect" />
         </a>
+
         <nav class="nav-links">
-          <a href="index.html" class="nav-link-text">Home</a>
-          <a href="register.html" class="nav-btn primary-btn">Sign Up</a>
+          <a href="index.php" class="nav-link-text">Home</a>
+          <a href="register.php" class="nav-btn primary-btn">Sign Up</a>
         </nav>
       </div>
     </header>
@@ -74,7 +87,7 @@ die("Invalid user login.");
             profile.
           </p>
 
-          <form id="loginForm">
+          <form id="loginForm" action="login.php" method="POST">
             <div class="form-group">
               <label for="loginEmail">Email Address</label>
               <div class="input-with-icon">
@@ -82,6 +95,7 @@ die("Invalid user login.");
                 <input
                   type="email"
                   id="loginEmail"
+                  name="loginEmail"
                   placeholder="Enter your email"
                   required
                 />
@@ -95,38 +109,41 @@ die("Invalid user login.");
                 <input
                   type="password"
                   id="loginPassword"
+                  name="loginPassword"
                   placeholder="Enter your password"
                   required
                 />
               </div>
             </div>
 
-            <input type="hidden" id="loginRole" value="user" />
+            <input type="hidden" id="loginRole" name="loginRole" value="user" />
 
             <div class="login-action-stack">
               <button
-                type="button"
-                id="loginUserBtn"
+                type="submit"
                 class="primary-btn auth-action-btn"
+                onclick="document.getElementById('loginRole').value='user'"
               >
                 Login as User →
               </button>
 
               <button
-                type="button"
-                id="loginAdminBtn"
+                type="submit"
                 class="secondary-btn auth-action-btn"
+                onclick="document.getElementById('loginRole').value='admin'"
               >
                 Login as Admin →
               </button>
             </div>
 
-            <p id="loginMessage" class="form-message"></p>
+            <?php if ($message !== ""): ?>
+              <p class="form-message"><?php echo htmlspecialchars($message); ?></p>
+            <?php endif; ?>
           </form>
 
           <p class="auth-footer-text center-text">
             New to UniFind?
-            <a href="register.html">Sign up</a>
+            <a href="register.php">Sign up</a>
           </p>
 
           <div class="mini-info-box">
@@ -141,10 +158,9 @@ die("Invalid user login.");
     <footer class="site-footer clean-footer">
       <div class="container clean-footer-content">
         <h3>
-          <span class="footer-dark">Uni</span
-          ><span class="footer-blue">Find</span>
+          <span class="footer-dark">Uni</span><span class="footer-blue">Find</span>
         </h3>
-        <p>© 2026 UniFind. Built for students, by students.</p>
+        <p>©️ 2026 UniFind. Built for students, by students.</p>
 
         <div class="clean-footer-links">
           <a href="#">Privacy</a>
@@ -153,7 +169,5 @@ die("Invalid user login.");
         </div>
       </div>
     </footer>
-
-    <script src="app.js"></script>
   </body>
 </html>

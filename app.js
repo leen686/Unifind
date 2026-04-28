@@ -134,7 +134,7 @@ function seedDemoUsers() {
 /* AUTH */
 function logout() {
   localStorage.removeItem("currentUser");
-  window.location.href = "index.html";
+  window.location.href = "index.php";
 }
 function setupAuthLinks() {
   const authLink = document.getElementById("authLink");
@@ -149,7 +149,7 @@ function setupAuthLinks() {
       };
     } else {
       authLink.textContent = "Sign In";
-      authLink.href = "login.html";
+      authLink.href = "login.php";
     }
   }
 
@@ -174,7 +174,7 @@ function requireUserRole() {
   const currentUser = getCurrentUser();
   if (!currentUser || currentUser.role !== "user") {
     alert("This page is for users only.");
-    window.location.href = "login.html";
+    window.location.href = "login.php";
     return false;
   }
   return true;
@@ -183,7 +183,7 @@ function requireAdminRole() {
   const currentUser = getCurrentUser();
   if (!currentUser || currentUser.role !== "admin") {
     alert("This page is for admins only.");
-    window.location.href = "login.html";
+    window.location.href = "login.php";
     return false;
   }
   return true;
@@ -226,7 +226,7 @@ function setupLoginForm() {
       setCurrentUser(admin);
       message.textContent = "Admin login successful. Redirecting...";
       setTimeout(() => {
-        window.location.href = "admin-reports.html";
+        window.location.href = "admin-reports.php";
       }, 700);
       return;
     }
@@ -242,7 +242,7 @@ function setupLoginForm() {
     setCurrentUser(user);
     message.textContent = "Login successful. Redirecting...";
     setTimeout(() => {
-      window.location.href = "reports.html";
+      window.location.href = "reports.php";
     }, 700);
   }
 
@@ -288,7 +288,7 @@ function setupRegisterForm() {
 
     message.textContent = "Account created successfully. Redirecting...";
     setTimeout(() => {
-      window.location.href = "reports.html";
+      window.location.href = "reports.php";
     }, 700);
   });
 }
@@ -313,7 +313,7 @@ function createUserReportCard(report, options = {}) {
       <p>${report.description}</p>
 
       <div class="actions">
-        <a href="report-details.html?id=${report.id}" class="primary-btn">View</a>
+        <a href="report-details.php?id=${report.id}" class="primary-btn">View</a>
         ${
           showSave
             ? showRemoveSaved
@@ -324,7 +324,7 @@ function createUserReportCard(report, options = {}) {
         ${
           canManage
             ? `
-              <a href="edit-report.html?id=${report.id}" class="secondary-btn">Edit</a>
+              <a href="edit-report.php?id=${report.id}" class="secondary-btn">Edit</a>
               <button class="secondary-btn" onclick="deleteOwnReport(${report.id})">Delete</button>
             `
             : ""
@@ -347,7 +347,7 @@ function createAdminReportCard(report) {
       <p>${report.description}</p>
 
       <div class="actions">
-        <a href="admin-edit-report.html?id=${report.id}" class="primary-btn">Edit</a>
+        <a href="admin-edit-report.php?id=${report.id}" class="primary-btn">Edit</a>
         <button class="secondary-btn" onclick="deleteAnyReport(${report.id})">Delete</button>
       </div>
     </div>
@@ -468,7 +468,7 @@ function setupAddReportForm() {
       reportForm.reset();
 
       setTimeout(() => {
-        window.location.href = "my-reports.html";
+        window.location.href = "my-reports.php";
       }, 700);
     });
   });
@@ -511,11 +511,11 @@ function renderReportDetailsPage() {
           <button class="secondary-btn" onclick="toggleSaveReport(${report.id})">
             ${isSaved ? "Unsave" : "Save"}
           </button>
-          <a href="reports.html" class="secondary-btn">Back</a>
+          <a href="reports.php" class="secondary-btn">Back</a>
           ${
             isOwner
               ? `
-                <a href="edit-report.html?id=${report.id}" class="primary-btn">Edit</a>
+                <a href="edit-report.php?id=${report.id}" class="primary-btn">Edit</a>
                 <button class="secondary-btn" onclick="deleteOwnReport(${report.id})">Delete</button>
               `
               : ""
@@ -587,7 +587,7 @@ function deleteOwnReport(reportId) {
 
   setReports(reports.filter((item) => item.id !== reportId));
   setSavedReports(getSavedReports().filter((id) => id !== reportId));
-  window.location.href = "my-reports.html";
+  window.location.href = "my-reports.php";
 }
 
 /* EDIT OWN */
@@ -603,7 +603,7 @@ function setupEditReportForm() {
 
   if (!report || report.ownerEmail !== currentUser.email) {
     alert("You can only edit your own reports.");
-    window.location.href = "my-reports.html";
+    window.location.href = "my-reports.php";
     return;
   }
 
@@ -635,7 +635,7 @@ function setupEditReportForm() {
       editMessage.textContent = "Report updated successfully.";
 
       setTimeout(() => {
-        window.location.href = "my-reports.html";
+        window.location.href = "my-reports.php";
       }, 700);
     });
   });
@@ -765,7 +765,7 @@ function deleteAnyReport(reportId) {
   if (!requireAdminRole()) return;
   setReports(getReports().filter((report) => report.id !== reportId));
   setSavedReports(getSavedReports().filter((id) => id !== reportId));
-  window.location.href = "admin-reports.html";
+  window.location.href = "admin-reports.php";
 }
 
 /* ADMIN EDIT */
@@ -780,7 +780,7 @@ function setupAdminEditReportForm() {
 
   if (!report) {
     alert("Report not found.");
-    window.location.href = "admin-reports.html";
+    window.location.href = "admin-reports.php";
     return;
   }
 
@@ -816,7 +816,7 @@ function setupAdminEditReportForm() {
       adminEditMessage.textContent = "Report updated successfully.";
 
       setTimeout(() => {
-        window.location.href = "admin-reports.html";
+        window.location.href = "admin-reports.php";
       }, 700);
     });
   });
