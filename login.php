@@ -24,7 +24,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($adminResult->num_rows === 1) {
             $admin = $adminResult->fetch_assoc();
 
-            if ($password === $admin['password']) {
+            $storedAdminPassword = $admin['password'];
+            $isValidAdminPassword = password_verify($password, $storedAdminPassword);
+
+            // Upgrade passwords from existing local databases on successful login.
+            if (!$isValidAdminPassword && password_get_info($storedAdminPassword)['algoName'] === 'unknown') {
+                $isValidAdminPassword = hash_equals($storedAdminPassword, $password);
+
+                if ($isValidAdminPassword) {
+                    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                    $updateStmt = $conn->prepare(
+                        "UPDATE administrators SET password = ? WHERE adminID = ? AND password = ?"
+                    );
+                    $updateStmt->bind_param("sis", $hashedPassword, $admin['adminID'], $storedAdminPassword);
+                    $updateStmt->execute();
+                    $updateStmt->close();
+                }
+            }
+
+            if ($isValidAdminPassword) {
                 $_SESSION['adminID'] = $admin['adminID'];
                 $_SESSION['role'] = 'admin';
                 header("Location: admin-reports.php");
