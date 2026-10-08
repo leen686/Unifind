@@ -42,7 +42,7 @@ Developed collaboratively by:
 - Leen Almutairi
 - Jana Aldakheel
 - Latifah Alsaif
-- Sadeem Alhassan
+- Sadeem Alnassar
 - Badriyah Aljabri
 
 This project was developed as part of an academic team effort at King Saud University.
