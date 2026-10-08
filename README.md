@@ -89,6 +89,14 @@ These findings reflect a **small academic evaluation sample** and should not be 
 
 The brief summarizes the problem, solution, architecture, design-stage ERD, original interface examples, and testing results.
 
+## Interface Screenshots
+
+### Browse & Search Reports
+![UniFind All Reports — browse, search, and filter reports](docs/screenshots/UniFind-Real-All-Reports.png)
+
+### Manage Personal Reports
+![UniFind My Reports — view, edit, and delete submitted reports](docs/screenshots/UniFind-Real-My-Reports.png)
+
 ## Team
 
 This is a **collaborative academic project** developed by:
