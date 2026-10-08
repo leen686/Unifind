@@ -24,6 +24,12 @@ UniFind is a collaborative academic project developed to provide King Saud Unive
 | Database | MySQL |
 | Database Access | MySQLi |
 
+## Project Documentation
+
+For a detailed overview of the system design, architecture, database modeling, implementation, and testing results, explore the project documentation.
+
+📄 **[View Project Technical Brief](UniFind-Project-Brief-Verified.pdf)**
+
 ## Project Structure
 
 - `index.php` — Landing page
