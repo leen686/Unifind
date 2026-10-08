@@ -60,7 +60,7 @@ The database schema defines five main tables: `users`, `administrators`, `report
    git clone https://github.com/leen686/Unifind.git
    cd Unifind
    ```
-2. Create a local database named `unifind_db` and import `unifind_db.sql`. **The SQL dump currently contains sample accounts, including a plaintext demo administrator password. Replace or remove the demo data before running the project, and do not deploy it as-is.**
+2. Create a local database named `unifind_db` and import `unifind_db.sql`. **The SQL dump includes sample accounts and a known demo administrator password stored as a hash. Change or remove these demo credentials before any public deployment. Existing local databases with the older plaintext admin password are upgraded automatically after a successful admin login.**
 3. Configure the local database connection in `db.php` for your own MySQL host, port, username, and password. Never reuse sample credentials in a public or production deployment.
 4. Make sure the `uploads/` directory exists and the local web-server process can write to it.
 5. Serve the project using a local PHP server, for example:
