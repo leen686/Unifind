@@ -4,7 +4,17 @@
 
 UniFind was developed collaboratively by a five-member student team as part of an academic software engineering project. The platform addresses a common campus problem: information about missing belongings is often scattered across group chats and social media, making reports difficult to find and follow up on.
 
+**Explore:** [Interface screenshots](#interface-screenshots) · [Project brief (PDF)](UniFind-Project-Brief-Verified.pdf) · [Run locally](#run-locally)
+
 > **Project status:** Academic prototype. The repository contains a local-development implementation; UniFind is not presented as an officially deployed King Saud University service.
+
+## Interface Screenshots
+
+### Browse & Search Reports
+![UniFind All Reports — browse, search, and filter reports](docs/screenshots/UniFind-Real-All-Reports.png)
+
+### Manage Personal Reports
+![UniFind My Reports — view, edit, and delete submitted reports](docs/screenshots/UniFind-Real-My-Reports.png)
 
 ## Features
 
@@ -88,14 +98,6 @@ These findings reflect a **small academic evaluation sample** and should not be 
 [**View the UniFind Project Brief (PDF)**](UniFind-Project-Brief-Verified.pdf)
 
 The brief summarizes the problem, solution, architecture, design-stage ERD, original interface examples, and testing results.
-
-## Interface Screenshots
-
-### Browse & Search Reports
-![UniFind All Reports — browse, search, and filter reports](docs/screenshots/UniFind-Real-All-Reports.png)
-
-### Manage Personal Reports
-![UniFind My Reports — view, edit, and delete submitted reports](docs/screenshots/UniFind-Real-My-Reports.png)
 
 ## Team
 
