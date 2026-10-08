@@ -1,0 +1,22 @@
+# UniFind: local-only settings and credentials
+.env
+.env.*
+!.env.example
+/credentials
+/db.local.php
+/config.local.php
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local PHP dependencies and generated files
+/vendor/
+*.log
+*.tmp
+
+# New runtime uploads (existing committed sample images are unaffected)
+/uploads/*
+!/uploads/.gitkeep
