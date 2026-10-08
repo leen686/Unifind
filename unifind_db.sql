@@ -39,7 +39,7 @@ CREATE TABLE `administrators` (
 --
 
 INSERT INTO `administrators` (`adminID`, `email`, `password`, `permissions`) VALUES
-(1, 'admin@unifind.com', 'admin123', 'full');
+(1, 'admin@unifind.com', '$2y$12$m84FYRKs3oID8C8Z50a6M.LsCoBC4qD5xXSBDeROgxgEiqXRR1bxq', 'full');
 
 -- --------------------------------------------------------
 
