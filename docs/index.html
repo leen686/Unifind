@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Try UniFind, a university lost-and-found project, through an interactive demo.">
+<title>UniFind | Interactive Demo</title>
+<link rel="stylesheet" href="demo.css">
+<script defer src="demo.js"></script>
+</head>
+<body>
+<header class="nav"><div class="wrap nav-inner">
+<a class="logo" href="#home">Uni<span>Find</span></a>
+<nav aria-label="Demo sections"><a href="#home" data-tab="home">Home</a><a href="#reports" data-tab="reports">Reports</a><a href="#saved" data-tab="saved">Saved <b id="saved-count">0</b></a><a href="#mine" data-tab="mine">My Reports</a></nav>
+<a class="btn primary small" href="#add">+ Add Report</a>
+</div></header>
+<main>
+<div class="wrap"><div class="notice"><b>INTERACTIVE DEMO</b><span>Sample data only · No login or database · Your changes stay in this browser</span><button id="reset" type="button">Reset demo ↻</button></div></div>
+<section id="home" class="screen"><div class="wrap">
+<div class="hero"><div>
+<p class="eyebrow">STUDENT LOST &amp; FOUND PLATFORM</p>
+<h1>Lost something<br>on campus?</h1>
+<h2>We'll help you find it.</h2>
+<p class="lead">UniFind organizes lost-and-found reports in one accessible place. Explore this interactive preview of our academic team project.</p>
+<div class="actions"><a class="btn primary" href="#reports">Explore Reports →</a><a class="btn secondary" href="#add">Try Adding a Report</a></div>
+<p class="subtle">● No account required to try the demo</p>
+</div><div class="hero-preview"><div class="preview-bar">● ● ● &nbsp; UniFind / Reports</div><h3>Find what's missing.</h3><p>Browse reports and discover items.</p>
+<div class="preview-images">
+<div><img src="https://raw.githubusercontent.com/leen686/Unifind/main/images/airpods.webp" alt="AirPods case"><strong>AirPods Case</strong><small>Cafeteria</small></div>
+<div><img src="https://raw.githubusercontent.com/leen686/Unifind/main/images/backpack.webp" alt="Backpack"><strong>Backpack</strong><small>Building 5</small></div>
+<div><img src="https://raw.githubusercontent.com/leen686/Unifind/main/images/wallet.jpeg" alt="Wallet"><strong>Black Wallet</strong><small>Library</small></div>
+</div></div></div>
+<div class="section-title"><p class="eyebrow">HOW IT WORKS</p><h2>One place for what's missing.</h2><p>Test these features in the browser.</p></div>
+<div class="feature-grid">
+<a href="#add"><span>✎</span><h3>Submit a Report</h3><p>Add a sample report using an item name, category, date, location, and description.</p><b>Try reporting →</b></a>
+<a href="#reports"><span>⌕</span><h3>Browse &amp; Search</h3><p>Search for items, filter by category, and sort reports by date.</p><b>Browse items →</b></a>
+<a href="#saved"><span>♡</span><h3>Save &amp; Manage</h3><p>Bookmark an item or update a report you created in the demo.</p><b>View saved →</b></a>
+</div></div></section>
+<section id="reports" class="screen" hidden><div class="wrap content">
+<p class="eyebrow">FIND YOUR ITEM</p><h1>All Reports</h1><p class="intro">Search, filter, and sort campus lost-and-found reports.</p>
+<div class="filters"><label>Search by Keyword<input id="q" type="search" placeholder="Item, description or location" aria-label="Search reports"></label><label>Category<select id="cat"><option value="all">All Categories</option><option>Wallet</option><option>Keys</option><option>Bag</option><option>Other</option><option>ID Card</option><option>Phone</option></select></label><label>Sort by Time<select id="sort"><option value="newest">Newest First</option><option value="oldest">Oldest First</option></select></label></div>
+<p class="result-heading" id="result-count"></p><div class="cards" id="report-list"></div>
+</div></section>
+<section id="saved" class="screen" hidden><div class="wrap content"><p class="eyebrow">BOOKMARKED ITEMS</p><h1>Saved Reports</h1><p class="intro">Items you save remain on this device only.</p><div class="cards" id="saved-list"></div></div></section>
+<section id="mine" class="screen" hidden><div class="wrap content"><p class="eyebrow">YOUR ACTIVITY</p><h1>My Reports</h1><p class="intro">Edit or delete the reports you created during this demo.</p><div class="cards" id="mine-list"></div><p><a class="btn primary" href="#add">+ Add another report</a></p></div></section>
+<section id="add" class="screen" hidden><div class="wrap content">
+<p class="eyebrow">TRY REPORTING</p><h1 id="form-title">Add Item Report</h1><p class="intro">Demo data is stored in your own browser, not sent to a server.</p>
+<form id="report-form" class="report-form">
+<div class="form-grid">
+<label>Item Name<input name="itemName" required maxlength="80" placeholder="e.g., Blue water bottle"></label>
+<label>Category<select name="category" required><option value="">Select Category</option><option>Wallet</option><option>Keys</option><option>Bag</option><option>Phone</option><option>ID Card</option><option>Other</option></select></label>
+<label>Date<input type="date" name="date" required></label>
+<label>Location<input name="location" required maxlength="100" placeholder="e.g., Library"></label>
+<label class="wide">Description<textarea name="description" required maxlength="400" rows="4" placeholder="Describe the lost or found item"></textarea></label>
+</div><p class="tip">Privacy note: No passwords, phone numbers, or file uploads are collected.</p>
+<div class="actions"><button class="btn primary" id="submit" type="submit">Add Report</button><a class="btn secondary" href="#reports">Cancel</a></div>
+</form></div></section>
+</main>
+<dialog id="detail"><button id="close-detail" class="close" aria-label="Close details" type="button">×</button><div id="detail-body"></div></dialog>
+<p class="toast" id="toast" role="status" aria-live="polite"></p>
+<footer><div class="wrap"><div class="footer-main"><div><strong class="logo">Uni<span>Find</span></strong><p>Built for students, by students · Academic team project</p></div><div class="footer-links"><a href="https://github.com/leen686/Unifind" target="_blank" rel="noopener noreferrer">View Source Code ↗</a><a href="https://github.com/leen686/Unifind/blob/main/UniFind-Project-Brief-Verified.pdf" target="_blank" rel="noopener noreferrer">Project Brief ↗</a></div></div>
+<p class="credits"><strong>Project team:</strong> Leen Almutairi · Jana Aldakheel · Latifah Alsaif · Sadeem Alnassar · Badriyah Aljabri</p>
+<p class="disclaimer">Interactive browser-only portfolio demo of the UniFind academic project. Not the original PHP/MySQL application or an official university service.</p>
+</div></footer>
+</body></html>
