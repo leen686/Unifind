@@ -4,9 +4,9 @@
 
 UniFind was developed collaboratively by a five-member student team as part of an academic software engineering project. The platform addresses a common campus problem: information about missing belongings is often scattered across group chats and social media, making reports difficult to find and follow up on.
 
-**Explore:** [Interface screenshots](#interface-screenshots) · [Project brief (PDF)](UniFind-Project-Brief-Verified.pdf) · [Run locally](#run-locally)
+**[▶ Try Live Demo](https://leen686.github.io/Unifind/)** · [Interface Screenshots](#interface-screenshots) · [Project Brief (PDF)](UniFind-Project-Brief-Verified.pdf) · [Run Locally](#run-locally)
 
-> **Project status:** Academic prototype. The repository contains a local-development implementation; UniFind is not presented as an officially deployed King Saud University service.
+> **Demo note:** The public interactive demo uses sample data stored in each visitor's browser. The original PHP/MySQL application is a separate, locally run academic prototype, not an officially deployed King Saud University service.
 
 ## Interface Screenshots
 
