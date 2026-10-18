@@ -1,107 +1,119 @@
-# UniFind | University Lost & Found Web Platform
+# UniFind 📍
 
-**A full-stack academic web application that helps King Saud University students report, find, and manage lost-and-found items in one place.**
+**A full-stack lost-and-found web platform that helps King Saud University students report, find and manage lost items in one place.**
 
-UniFind was developed collaboratively by a five-member student team as part of an academic software engineering project. The platform addresses a common campus problem: information about missing belongings is often scattered across group chats and social media, making reports difficult to find and follow up on.
+![PHP](https://img.shields.io/badge/PHP-777BB4?logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
 
-**[▶ Try Live Demo](https://leen686.github.io/Unifind/)** · [Interface Screenshots](#interface-screenshots) · [Project Brief (PDF)](UniFind-Project-Brief-Verified.pdf) · [Run Locally](#run-locally)
+### [▶ Try the live demo](https://leen686.github.io/Unifind/)
 
-> **Demo note:** The public interactive demo uses sample data stored in each visitor's browser. The original PHP/MySQL application is a separate, locally run academic prototype, not an officially deployed King Saud University service.
+One-click access as a student or an admin, with sample data — no sign-up needed.
 
-## Interface Screenshots
+![UniFind home page](docs/screenshots/UniFind-Home.png)
 
-### Browse & Search Reports
-![UniFind All Reports — browse, search, and filter reports](docs/screenshots/UniFind-Real-All-Reports.png)
+## The problem
 
-### Manage Personal Reports
-![UniFind My Reports — view, edit, and delete submitted reports](docs/screenshots/UniFind-Real-My-Reports.png)
+On campus, news about lost belongings is scattered across group chats and social media, so reports are hard to find, compare or follow up on. In the team's survey of 20 students, **80% had lost an item on campus** and **85% said they would use a central website** for lost-and-found reports.
+
+UniFind gives students one organised place to report items, search what has been found, and keep track of their own reports.
+
+## Highlights
+
+- **Full-stack application:** PHP back end, MySQL database, responsive HTML/CSS front end
+- **Three-tier architecture:** separate presentation, application and data layers
+- **Two roles:** students and administrators, detected automatically at sign-in
+- **Prepared statements** for all database queries
+- **User-centred process:** requirements from 5 interviews and 20 survey responses, validated by user acceptance testing
 
 ## Features
 
-- **Account management:** User registration, sign-in, sign-out, and profile editing.
-- **Item reports:** Create reports with an item name, category, description, date, location, contact number, and image.
-- **Browse and search:** Search report details using keywords, filter by item category, and sort by date.
-- **Personal report management:** View, edit, and delete reports submitted by the signed-in user.
-- **Saved reports:** Save reports for later reference and remove them from the saved list.
-- **Administrative management:** Review, search, edit, and delete reports through a separate admin interface.
+| Students | Administrators |
+|---|---|
+| Register, sign in and edit their profile | View every report on the platform, with its owner |
+| Report an item with a photo, category, date, location and contact number | Search reports by keyword, including the owner's email |
+| Search by keyword, filter by category and sort by date | Filter and sort reports |
+| Save reports to revisit later | Edit any report |
+| Edit or delete their own reports | Delete reports |
 
-## Tech Stack
+### Browse and search reports
+![All reports page](docs/screenshots/UniFind-Real-All-Reports.png)
+
+### Manage your own reports
+![My reports page](docs/screenshots/UniFind-Real-My-Reports.png)
+
+## Research and testing
+
+- **Requirements:** 5 student interviews and 20 questionnaire responses
+- **Process:** documented requirements, product backlog, architectural design, implementation and testing
+- **Testing:** user-story acceptance testing, integration testing and user acceptance testing (UAT)
+- **UAT results:** all 5 participants agreed the interface was clear and creating a report was easy; 4 of 5 agreed UniFind met their lost-and-found needs
+
+These results come from a small academic evaluation and are not a large-scale usability study.
+
+📄 [Read the project brief (PDF)](UniFind-Project-Brief-Verified.pdf) — problem, architecture, data model, interface and test results.
+
+## Tech stack
 
 | Layer | Technologies |
-| --- | --- |
+|---|---|
 | Front end | HTML5, CSS3, JavaScript |
-| Application / back end | PHP |
-| Database | MySQL |
-| Database interface | MySQLi |
+| Back end | PHP with sessions and MySQLi prepared statements |
+| Database | MySQL — `users`, `administrators`, `reports`, `categories`, `saved_reports` |
 
-## Architecture & Data Design
+<details>
+<summary><b>Project structure</b></summary>
 
-UniFind was designed around a **three-tier architecture**:
+| Files | Purpose |
+|---|---|
+| `index.php` | Landing page |
+| `register.php`, `login.php`, `logout.php` | Registration and sign-in for students and admins |
+| `reports.php`, `report-details.php` | Browse, search, filter, sort and view reports |
+| `add-report.php`, `edit-report.php`, `delete-report.php`, `my-reports.php` | Create and manage your own reports |
+| `saved.php`, `toggle-save.php` | Save and unsave reports |
+| `admin-reports.php`, `admin-edit-report.php`, `admin-delete-report.php` | Administration |
+| `profile.php` | Profile management |
+| `styles.css` | Styles |
+| `db.php`, `unifind_db.sql` | Database connection and schema with sample data |
+| `images/`, `uploads/` | Sample and uploaded images |
+| `docs/` | Live demo (GitHub Pages) and README screenshots |
 
-1. **Presentation layer:** Web pages and client-side interactions.
-2. **Application layer:** PHP-based authentication, report handling, input checks, and application logic.
-3. **Data layer:** MySQL storage for accounts, reports, item categories, and saved reports.
+</details>
 
-The database schema defines five main tables: `users`, `administrators`, `reports`, `categories`, and `saved_reports`. The linked project brief includes the architecture, selected interface screenshots, and an entity-relationship diagram (ERD). The ERD reflects the academic design stage; the current SQL schema is the reference for implemented database fields.
+<details>
+<summary><b>Run it locally</b></summary>
 
-## Repository Guide
-
-| Files / folders | Purpose |
-| --- | --- |
-| `index.php` | Public landing page |
-| `register.php`, `login.php`, `logout.php` | Registration and authentication workflows |
-| `reports.php`, `report-details.php` | Browse, search, filter, and view item reports |
-| `add-report.php`, `edit-report.php`, `delete-report.php`, `my-reports.php` | Create and manage personal reports |
-| `saved.php`, `toggle-save.php` | Save or unsave reports |
-| `admin-reports.php`, `admin-edit-report.php`, `admin-delete-report.php` | Admin report management |
-| `profile.php` | User profile management |
-| `styles.css`, `app.js` | Styling and client-side behavior |
-| `db.php`, `unifind_db.sql` | Database connection and SQL schema |
-| `images/` | Static assets used by the application |
-| `uploads/` | Uploaded report images (runtime content) |
-| `UniFind-Project-Brief-Verified.pdf` | Concise project documentation |
-
-## Run Locally
-
-**Prerequisites:** PHP with MySQLi enabled, a local web server (or PHP's development server), and a MySQL-compatible database.
+**You need:** PHP with MySQLi, and MySQL (for example XAMPP or MAMP).
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/leen686/Unifind.git
    cd Unifind
    ```
-2. Create a local database named `unifind_db` and import `unifind_db.sql`. **The SQL dump currently contains sample accounts, including a plaintext demo administrator password. Replace or remove the demo data before running the project, and do not deploy it as-is.**
-3. Configure the local database connection in `db.php` for your own MySQL host, port, username, and password. Never reuse sample credentials in a public or production deployment.
-4. Make sure the `uploads/` directory exists and the local web-server process can write to it.
-5. Serve the project using a local PHP server, for example:
+2. Create a database named `unifind_db` and import `unifind_db.sql`.
+3. Update the connection settings in `db.php` to match your MySQL server.
+4. Make sure the `uploads/` folder is writable.
+5. Start a server and open it in your browser:
    ```bash
    php -S localhost:8000
    ```
-6. Open `http://localhost:8000` in your browser.
 
-This setup is intended for **local development and review**, not production hosting.
+The SQL file includes sample accounts for local testing only; replace them before any real use.
 
-## Research, Testing & Evaluation
+</details>
 
-The team used interviews and questionnaires to understand students' lost-and-found challenges and to shape the product requirements.
+<details>
+<summary><b>About the live demo</b></summary>
 
-- **Requirements research:** Five student interviews and 20 questionnaire responses.
-- **Development process:** Documented requirements, product backlog, architectural design, implementation, and testing.
-- **Testing:** User-story acceptance testing, integration testing, and user acceptance testing (UAT).
-- **UAT participants:** Five university students evaluated core tasks such as registration, report creation, search, editing, and deletion.
-- **UAT findings:** All five participants agreed or strongly agreed that the interface was clear and that creating a lost-item report was easy. Four out of five agreed or strongly agreed that UniFind met their needs for campus lost-and-found reporting.
+The demo in `docs/` uses the original pages and stylesheet, with the PHP/MySQL back end replaced by sample data stored in the visitor's browser, so it can run on GitHub Pages. It is a preview for portfolio purposes, not an official King Saud University service.
 
-These findings reflect a **small academic evaluation sample** and should not be interpreted as performance or usability guarantees at campus scale.
-
-## Project Documentation
-
-[**View the UniFind Project Brief (PDF)**](UniFind-Project-Brief-Verified.pdf)
-
-The brief summarizes the problem, solution, architecture, design-stage ERD, original interface examples, and testing results.
+</details>
 
 ## Team
 
-This is a **collaborative academic project** developed by:
+Developed by:
 
 - Leen Almutairi
 - Jana Aldakheel
@@ -109,12 +121,8 @@ This is a **collaborative academic project** developed by:
 - Sadeem Alnassar
 - Badriyah Aljabri
 
-King Saud University — College of Computer and Information Sciences, Department of Information Technology.
+*Academic software engineering project (IT320) — King Saud University, College of Computer and Information Sciences, 2026*
 
-## Current Scope & Future Improvements
+## Future improvements
 
-UniFind currently focuses on a single university and relies on reports submitted by users. The academic report identifies potential future additions such as notifications, automated lost-and-found matching, a mobile application, and support for additional institutions.
-
----
-
-*Academic project for learning and demonstration purposes. Not an official university lost-and-found service.*
+Notifications, automatic matching of lost and found items, a mobile app, and support for more universities.
